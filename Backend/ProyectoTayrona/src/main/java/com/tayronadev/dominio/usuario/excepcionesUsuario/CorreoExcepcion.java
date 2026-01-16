@@ -1,6 +1,6 @@
 package com.tayronadev.dominio.usuario.excepcionesUsuario;
 
-public class CorreoExcepcion extends UsuarioExcepción {
+public class CorreoExcepcion extends UsuarioExcepcion {
 
     public static final String MENSAJE_CORREO_INVALIDO = "El correo electronico no es valido";
     public static final String MENSAJE_CORREO_VACIO = "El correo electronico no puede estar vacío";

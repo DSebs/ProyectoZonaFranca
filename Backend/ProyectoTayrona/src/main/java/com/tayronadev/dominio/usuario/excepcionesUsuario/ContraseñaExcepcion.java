@@ -1,6 +1,6 @@
 package com.tayronadev.dominio.usuario.excepcionesUsuario;
 
-public class ContraseñaExcepcion extends UsuarioExcepción{
+public class ContraseñaExcepcion extends UsuarioExcepcion{
 
     public static final String MENSAJE_CONTRASEÑA_INVALIDA = "La contraseña debe tener mas de 8 caracteres\n" + "Un numero y una letra mayuscula";
     public static final String MENSAJE_CONTRASEÑA_VACIA = "La contraseña no puede estar vacia";
