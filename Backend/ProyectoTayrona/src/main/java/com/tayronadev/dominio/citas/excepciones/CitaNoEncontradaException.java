@@ -1,4 +1,6 @@
-package com.tayronadev.dominio.citas.modelo.excepciones;
+package com.tayronadev.dominio.citas.excepciones;
+
+import com.tayronadev.dominio.citas.excepciones.CitaException;
 
 /**
  * Excepción lanzada cuando no se encuentra una cita específica

@@ -1,23 +1,22 @@
 package com.tayronadev.dominio.citas.modelo;
 
-import java.util.Objects;
+import lombok.NonNull;
+import lombok.Value;
 
 /**
  * Value Object que encapsula toda la información del proveedor
  */
-public record InformacionProveedor(
-    String nombreProveedor,
-    String nit,
-    String numeroOrdenCompra,
-    DatosContacto responsable
-) {
+@Value
+public class InformacionProveedor {
+    @NonNull String nombreProveedor;
+    @NonNull String nit;
+    @NonNull String numeroOrdenCompra;
+    @NonNull DatosContacto responsable;
     
-    public InformacionProveedor {
-        Objects.requireNonNull(nombreProveedor, "El nombre del proveedor es obligatorio");
-        Objects.requireNonNull(nit, "El NIT es obligatorio");
-        Objects.requireNonNull(numeroOrdenCompra, "El número de orden de compra es obligatorio");
-        Objects.requireNonNull(responsable, "Los datos del responsable son obligatorios");
-        
+    public InformacionProveedor(@NonNull String nombreProveedor, 
+                               @NonNull String nit, 
+                               @NonNull String numeroOrdenCompra, 
+                               @NonNull DatosContacto responsable) {
         if (nombreProveedor.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del proveedor no puede estar vacío");
         }
@@ -27,5 +26,10 @@ public record InformacionProveedor(
         if (numeroOrdenCompra.trim().isEmpty()) {
             throw new IllegalArgumentException("El número de orden de compra no puede estar vacío");
         }
+        
+        this.nombreProveedor = nombreProveedor;
+        this.nit = nit;
+        this.numeroOrdenCompra = numeroOrdenCompra;
+        this.responsable = responsable;
     }
 }

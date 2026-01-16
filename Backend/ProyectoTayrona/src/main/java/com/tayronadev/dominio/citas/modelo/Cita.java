@@ -1,22 +1,34 @@
 package com.tayronadev.dominio.citas.modelo;
 
+import com.tayronadev.dominio.citas.excepciones.EstadoCitaInvalidoException;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.tayronadev.dominio.citas.excepciones.EstadoCitaInvalidoException;
-
 /**
  * Entidad de dominio que representa una Cita en el sistema de agendamiento.
  * Esta es la entidad raíz del agregado Cita.
  */
+@Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {"observaciones", "estadoPostCita"})
 public class Cita {
     
+    @EqualsAndHashCode.Include
     private final String id;
+    @NonNull
     private final TipoCita tipoCita;
+    @NonNull
     private final InformacionProveedor proveedor;
+    @NonNull
     private final OpcionTransporte transporte;
+    @NonNull
     private final Horario horario;
     private final LocalDateTime fechaCreacion;
     
@@ -28,15 +40,15 @@ public class Cita {
     /**
      * Constructor para crear una nueva cita
      */
-    public Cita(TipoCita tipoCita, 
-                InformacionProveedor proveedor, 
-                OpcionTransporte transporte, 
-                Horario horario) {
+    public Cita(@NonNull TipoCita tipoCita, 
+                @NonNull InformacionProveedor proveedor, 
+                @NonNull OpcionTransporte transporte, 
+                @NonNull Horario horario) {
         this.id = UUID.randomUUID().toString();
-        this.tipoCita = Objects.requireNonNull(tipoCita, "El tipo de cita es obligatorio");
-        this.proveedor = Objects.requireNonNull(proveedor, "La información del proveedor es obligatoria");
-        this.transporte = Objects.requireNonNull(transporte, "La información de transporte es obligatoria");
-        this.horario = Objects.requireNonNull(horario, "El horario es obligatorio");
+        this.tipoCita = tipoCita;
+        this.proveedor = proveedor;
+        this.transporte = transporte;
+        this.horario = horario;
         this.estado = EstadoCita.PENDIENTE;
         this.fechaCreacion = LocalDateTime.now();
         this.fechaUltimaModificacion = LocalDateTime.now();
@@ -49,24 +61,24 @@ public class Cita {
     /**
      * Constructor para reconstruir una cita existente (desde persistencia)
      */
-    public Cita(String id,
-                TipoCita tipoCita,
-                InformacionProveedor proveedor,
-                OpcionTransporte transporte,
-                Horario horario,
-                EstadoCita estado,
+    public Cita(@NonNull String id,
+                @NonNull TipoCita tipoCita,
+                @NonNull InformacionProveedor proveedor,
+                @NonNull OpcionTransporte transporte,
+                @NonNull Horario horario,
+                @NonNull EstadoCita estado,
                 String observaciones,
-                LocalDateTime fechaCreacion,
-                LocalDateTime fechaUltimaModificacion) {
-        this.id = Objects.requireNonNull(id, "El ID es obligatorio");
-        this.tipoCita = Objects.requireNonNull(tipoCita, "El tipo de cita es obligatorio");
-        this.proveedor = Objects.requireNonNull(proveedor, "La información del proveedor es obligatoria");
-        this.transporte = Objects.requireNonNull(transporte, "La información de transporte es obligatoria");
-        this.horario = Objects.requireNonNull(horario, "El horario es obligatorio");
-        this.estado = Objects.requireNonNull(estado, "El estado es obligatorio");
+                @NonNull LocalDateTime fechaCreacion,
+                @NonNull LocalDateTime fechaUltimaModificacion) {
+        this.id = id;
+        this.tipoCita = tipoCita;
+        this.proveedor = proveedor;
+        this.transporte = transporte;
+        this.horario = horario;
+        this.estado = estado;
         this.observaciones = observaciones;
-        this.fechaCreacion = Objects.requireNonNull(fechaCreacion, "La fecha de creación es obligatoria");
-        this.fechaUltimaModificacion = Objects.requireNonNull(fechaUltimaModificacion, "La fecha de última modificación es obligatoria");
+        this.fechaCreacion = fechaCreacion;
+        this.fechaUltimaModificacion = fechaUltimaModificacion;
     }
     
     /**
@@ -121,6 +133,46 @@ public class Cita {
     }
     
     /**
+     * Marca la cita como entregada (solo si está confirmada)
+     */
+    public void marcarComoEntregada() {
+        validarEstadoParaPostCita();
+        this.estadoPostCita = EstadoPostCita.ENTREGADO;
+        this.fechaUltimaModificacion = LocalDateTime.now();
+    }
+    
+    /**
+     * Marca la cita como devuelta (solo si está confirmada)
+     */
+    public void marcarComoDevuelta() {
+        validarEstadoParaPostCita();
+        this.estadoPostCita = EstadoPostCita.DEVUELTO;
+        this.fechaUltimaModificacion = LocalDateTime.now();
+    }
+    
+    /**
+     * Marca la cita como tardía (solo si está confirmada)
+     */
+    public void marcarComoTardia() {
+        validarEstadoParaPostCita();
+        this.estadoPostCita = EstadoPostCita.TARDIA;
+        this.fechaUltimaModificacion = LocalDateTime.now();
+    }
+    
+    /**
+     * Verifica si la cita tiene un estado post-cita definido
+     */
+    public boolean tieneEstadoPostCita() {
+        return estadoPostCita != null;
+    }
+    
+    private void validarEstadoParaPostCita() {
+        if (estado != EstadoCita.CONFIRMADA) {
+            throw new EstadoCitaInvalidoException(estado, "establecer estado post-cita");
+        }
+    }
+    
+    /**
      * Verifica si la cita puede ser modificada
      */
     public boolean puedeSerModificada() {
@@ -143,33 +195,12 @@ public class Cita {
         }
     }
     
-    // Getters
-    public String getId() { return id; }
-    public TipoCita getTipoCita() { return tipoCita; }
-    public InformacionProveedor getProveedor() { return proveedor; }
-    public OpcionTransporte getTransporte() { return transporte; }
-    public Horario getHorario() { return horario; }
-    public EstadoCita getEstado() { return estado; }
-    public Optional<String> getObservaciones() { return Optional.ofNullable(observaciones); }
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public LocalDateTime getFechaUltimaModificacion() { return fechaUltimaModificacion; }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Cita cita = (Cita) o;
-        return Objects.equals(id, cita.id);
+    // Métodos adicionales para Optional wrapping (Lombok no los genera automáticamente)
+    public Optional<String> getObservaciones() { 
+        return Optional.ofNullable(observaciones); 
     }
     
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-    
-    @Override
-    public String toString() {
-        return String.format("Cita{id='%s', tipo=%s, estado=%s, proveedor='%s', horario=%s}", 
-                           id, tipoCita, estado, proveedor.nombreProveedor(), horario.fechaHora());
+    public Optional<EstadoPostCita> getEstadoPostCita() { 
+        return Optional.ofNullable(estadoPostCita); 
     }
 }

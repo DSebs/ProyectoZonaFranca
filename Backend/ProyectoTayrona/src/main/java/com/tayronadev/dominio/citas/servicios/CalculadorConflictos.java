@@ -1,9 +1,11 @@
-package com.tayronadev.dominio.citas.modelo.servicios;
+package com.tayronadev.dominio.citas.servicios;
 
 import com.tayronadev.dominio.citas.modelo.Cita;
 import com.tayronadev.dominio.citas.modelo.EstadoCita;
 import com.tayronadev.dominio.citas.modelo.Horario;
 import com.tayronadev.dominio.citas.modelo.TipoCita;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 /**
  * Servicio de dominio para calcular conflictos entre citas
  */
+@Service
+@Slf4j
 public class CalculadorConflictos {
     
     /**
@@ -47,7 +51,7 @@ public class CalculadorConflictos {
      */
     public List<Cita> obtenerCitasActivasProveedor(String nitProveedor, List<Cita> todasLasCitas) {
         return todasLasCitas.stream()
-                .filter(cita -> cita.getProveedor().nit().equals(nitProveedor))
+                .filter(cita -> cita.getProveedor().getNit().equals(nitProveedor))
                 .filter(cita -> !cita.getEstado().esFinal())
                 .collect(Collectors.toList());
     }

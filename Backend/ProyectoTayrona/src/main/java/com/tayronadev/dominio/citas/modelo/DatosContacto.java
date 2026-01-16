@@ -1,21 +1,18 @@
 package com.tayronadev.dominio.citas.modelo;
 
-import java.util.Objects;
+import lombok.NonNull;
+import lombok.Value;
 
 /**
  * Value Object que representa los datos de contacto de una persona
  */
-public record DatosContacto(
-    String nombre,
-    String email,
-    String telefono
-) {
+@Value
+public class DatosContacto {
+    @NonNull String nombre;
+    @NonNull String email;
+    @NonNull String telefono;
     
-    public DatosContacto {
-        Objects.requireNonNull(nombre, "El nombre es obligatorio");
-        Objects.requireNonNull(email, "El email es obligatorio");
-        Objects.requireNonNull(telefono, "El teléfono es obligatorio");
-        
+    public DatosContacto(@NonNull String nombre, @NonNull String email, @NonNull String telefono) {
         if (nombre.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
         }
@@ -25,6 +22,10 @@ public record DatosContacto(
         if (telefono.trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono no puede estar vacío");
         }
+        
+        this.nombre = nombre;
+        this.email = email;
+        this.telefono = telefono;
     }
     
     private static boolean esEmailValido(String email) {

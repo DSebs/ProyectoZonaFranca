@@ -1,12 +1,16 @@
-package com.tayronadev.dominio.citas.modelo.servicios;
+package com.tayronadev.dominio.citas.servicios;
 
+import com.tayronadev.dominio.citas.excepciones.EstadoCitaInvalidoException;
 import com.tayronadev.dominio.citas.modelo.Cita;
 import com.tayronadev.dominio.citas.modelo.EstadoCita;
-import com.tayronadev.dominio.citas.modelo.excepciones.EstadoCitaInvalidoException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 /**
  * Servicio de dominio para gestionar las transiciones de estado de las citas
  */
+@Service
+@Slf4j
 public class GestorEstadosCita {
     
     /**

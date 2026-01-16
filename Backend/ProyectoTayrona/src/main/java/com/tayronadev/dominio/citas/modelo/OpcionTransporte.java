@@ -1,11 +1,16 @@
 package com.tayronadev.dominio.citas.modelo;
 
-import java.util.Objects;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
+
 import java.util.Optional;
 
 /**
  * Clase abstracta que representa las opciones de transporte disponibles
  */
+@Getter
 public abstract class OpcionTransporte {
     
     private final DatosAuxiliar auxiliar;
@@ -35,31 +40,32 @@ public abstract class OpcionTransporte {
         TRANSPORTADORA("Transportadora"),
         PARTICULAR("Particular");
         
+        @Getter
         private final String descripcion;
         
         TipoTransporte(String descripcion) {
             this.descripcion = descripcion;
         }
-        
-        public String getDescripcion() {
-            return descripcion;
-        }
     }
     
     /**
-     * Record para los datos del auxiliar de transporte (opcional)
+     * Value Object para los datos del auxiliar de transporte (opcional)
      */
-    public record DatosAuxiliar(String nombre, String cedula) {
-        public DatosAuxiliar {
-            Objects.requireNonNull(nombre, "El nombre del auxiliar es obligatorio");
-            Objects.requireNonNull(cedula, "La cédula del auxiliar es obligatoria");
-            
+    @Value
+    public static class DatosAuxiliar {
+        @NonNull String nombre;
+        @NonNull String cedula;
+        
+        public DatosAuxiliar(@NonNull String nombre, @NonNull String cedula) {
             if (nombre.trim().isEmpty()) {
                 throw new IllegalArgumentException("El nombre del auxiliar no puede estar vacío");
             }
             if (cedula.trim().isEmpty()) {
                 throw new IllegalArgumentException("La cédula del auxiliar no puede estar vacía");
             }
+            
+            this.nombre = nombre;
+            this.cedula = cedula;
         }
     }
 }

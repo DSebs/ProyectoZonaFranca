@@ -1,5 +1,6 @@
-package com.tayronadev.dominio.citas.modelo.excepciones;
+package com.tayronadev.dominio.citas.excepciones;
 
+import com.tayronadev.dominio.citas.excepciones.CitaException;
 import com.tayronadev.dominio.citas.modelo.EstadoCita;
 
 /**

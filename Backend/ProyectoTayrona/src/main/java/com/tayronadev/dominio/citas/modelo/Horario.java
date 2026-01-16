@@ -1,19 +1,22 @@
 package com.tayronadev.dominio.citas.modelo;
 
+import lombok.NonNull;
+import lombok.Value;
+
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * Value Object que representa el horario de una cita
  */
-public record Horario(LocalDateTime fechaHora) {
+@Value
+public class Horario {
+    @NonNull LocalDateTime fechaHora;
     
-    public Horario {
-        Objects.requireNonNull(fechaHora, "La fecha y hora son obligatorias");
-        
+    public Horario(@NonNull LocalDateTime fechaHora) {
         if (fechaHora.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("No se puede agendar una cita en el pasado");
         }
+        this.fechaHora = fechaHora;
     }
     
     /**

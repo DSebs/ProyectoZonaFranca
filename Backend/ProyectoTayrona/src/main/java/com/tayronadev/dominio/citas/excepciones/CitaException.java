@@ -1,4 +1,4 @@
-package com.tayronadev.dominio.citas.modelo.excepciones;
+package com.tayronadev.dominio.citas.excepciones;
 
 /**
  * Excepción base para todas las excepciones relacionadas con el dominio de citas

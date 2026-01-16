@@ -1,21 +1,27 @@
 package com.tayronadev.dominio.citas.modelo;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Value;
 
 /**
  * Implementación de transporte particular
  */
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class TransporteParticular extends OpcionTransporte {
     
+    @NonNull
     private final DatosConductor conductor;
     
-    public TransporteParticular(DatosConductor conductor, DatosAuxiliar auxiliar) {
+    public TransporteParticular(@NonNull DatosConductor conductor, DatosAuxiliar auxiliar) {
         super(auxiliar);
-        this.conductor = Objects.requireNonNull(conductor, "Los datos del conductor son obligatorios");
+        this.conductor = conductor;
         validar();
     }
     
-    public TransporteParticular(DatosConductor conductor) {
+    public TransporteParticular(@NonNull DatosConductor conductor) {
         this(conductor, null);
     }
     
@@ -26,35 +32,19 @@ public class TransporteParticular extends OpcionTransporte {
     
     @Override
     public void validar() {
-        // La validación específica se hace en el record DatosConductor
-    }
-    
-    public DatosConductor getConductor() {
-        return conductor;
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TransporteParticular that = (TransporteParticular) o;
-        return Objects.equals(conductor, that.conductor);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(conductor);
+        // La validación específica se hace en el Value Object DatosConductor
     }
     
     /**
-     * Record que encapsula los datos del conductor
+     * Value Object que encapsula los datos del conductor
      */
-    public record DatosConductor(String nombre, String cedula, String placaVehiculo) {
-        public DatosConductor {
-            Objects.requireNonNull(nombre, "El nombre del conductor es obligatorio");
-            Objects.requireNonNull(cedula, "La cédula del conductor es obligatoria");
-            Objects.requireNonNull(placaVehiculo, "La placa del vehículo es obligatoria");
-            
+    @Value
+    public static class DatosConductor {
+        @NonNull String nombre;
+        @NonNull String cedula;
+        @NonNull String placaVehiculo;
+        
+        public DatosConductor(@NonNull String nombre, @NonNull String cedula, @NonNull String placaVehiculo) {
             if (nombre.trim().isEmpty()) {
                 throw new IllegalArgumentException("El nombre del conductor no puede estar vacío");
             }
@@ -64,6 +54,10 @@ public class TransporteParticular extends OpcionTransporte {
             if (placaVehiculo.trim().isEmpty()) {
                 throw new IllegalArgumentException("La placa del vehículo no puede estar vacía");
             }
+            
+            this.nombre = nombre;
+            this.cedula = cedula;
+            this.placaVehiculo = placaVehiculo;
         }
     }
 }
