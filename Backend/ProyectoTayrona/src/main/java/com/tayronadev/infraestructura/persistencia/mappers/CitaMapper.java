@@ -83,8 +83,8 @@ public class CitaMapper {
         // Crear opción de transporte
         var transporte = crearOpcionTransporte(entity);
         
-        // Crear horario
-        var horario = new Horario(entity.getFechaHora());
+        // Crear horario (usando reconstrucción para evitar validación de fecha pasada)
+        var horario = Horario.reconstruir(entity.getFechaHora());
         
         // Crear cita usando constructor de reconstrucción
         return new Cita(
@@ -95,6 +95,7 @@ public class CitaMapper {
             horario,
             entity.getEstado(),
             entity.getObservaciones(),
+            entity.getEstadoPostCita(),
             entity.getFechaCreacion(),
             entity.getFechaUltimaModificacion()
         );

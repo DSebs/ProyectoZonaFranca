@@ -68,6 +68,7 @@ public class Cita {
                 @NonNull Horario horario,
                 @NonNull EstadoCita estado,
                 String observaciones,
+                EstadoPostCita estadoPostCita,
                 @NonNull LocalDateTime fechaCreacion,
                 @NonNull LocalDateTime fechaUltimaModificacion) {
         this.id = id;
@@ -77,6 +78,7 @@ public class Cita {
         this.horario = horario;
         this.estado = estado;
         this.observaciones = observaciones;
+        this.estadoPostCita = estadoPostCita;
         this.fechaCreacion = fechaCreacion;
         this.fechaUltimaModificacion = fechaUltimaModificacion;
     }
