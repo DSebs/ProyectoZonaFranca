@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Notificación</title>
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f4f4f4;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            color: #ffffff;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-confirmada {
+            background-color: #27ae60;
+            color: #ffffff;
+        }
+        
+        .status-rechazada {
+            background-color: #e74c3c;
+            color: #ffffff;
+        }
+        
+        .status-cancelada {
+            background-color: #f39c12;
+            color: #ffffff;
+        }
+        
+        /* Content */
+        .content {
+            padding: 40px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .message {
+            font-size: 15px;
+            color: #555555;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .info-box h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            width: 140px;
+            flex-shrink: 0;
+        }
+        
+        .info-value {
+            color: #2c3e50;
+        }
+        
+        /* Alert Box */
+        .alert-box {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        
+        .alert-box h4 {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .alert-box p {
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        /* CTA Button */
+        .cta-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 35px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Divider */
+        .divider {
+            height: 1px;
+            background-color: #ecf0f1;
+            margin: 30px 0;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #2c3e50;
+            color: #bdc3c7;
+            padding: 30px 40px;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .footer .company-name {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .footer .contact-info {
+            margin: 15px 0;
+        }
+        
+        .footer .disclaimer {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 11px;
+            color: #95a5a6;
+        }
+        
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 25px;
+            }
+            
+            .header {
+                padding: 25px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+            }
+            
+            .info-label {
+                width: 100%;
+                margin-bottom: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fragment: Header -->
+    <div th:fragment="header(titulo, subtitulo)" class="header">
+        <h1 th:text="${titulo}">Título</h1>
+        <p class="subtitle" th:text="${subtitulo}">Subtítulo</p>
+    </div>
+    
+    <!-- Fragment: Info Box de Cita -->
+    <div th:fragment="infoCita" class="info-box">
+        <h3>📋 Detalles de la Cita</h3>
+        <div class="info-row">
+            <span class="info-label">Tipo de Cita:</span>
+            <span class="info-value" th:text="${tipoCita}">Entrega</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Fecha:</span>
+            <span class="info-value" th:text="${fechaCita}">Lunes, 20 de enero de 2025</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Hora:</span>
+            <span class="info-value" th:text="${horaCita}">10:00 AM</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Proveedor:</span>
+            <span class="info-value" th:text="${nombreProveedor}">Empresa XYZ</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">NIT:</span>
+            <span class="info-value" th:text="${nit}">123456789-0</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">ID de Cita:</span>
+            <span class="info-value" th:text="${citaId}">ABC123</span>
+        </div>
+    </div>
+    
+    <!-- Fragment: Footer -->
+    <div th:fragment="footer" class="footer">
+        <p class="company-name" th:text="${nombreEmpresa}">Zona Franca</p>
+        <div class="contact-info">
+            <p th:if="${telefonoEmpresa != null and !telefonoEmpresa.isEmpty()}" 
+               th:text="'📞 ' + ${telefonoEmpresa}">📞 +57 123 456 7890</p>
+            <p th:if="${direccionEmpresa != null and !direccionEmpresa.isEmpty()}" 
+               th:text="'📍 ' + ${direccionEmpresa}">📍 Dirección de la empresa</p>
+        </div>
+        <div class="disclaimer">
+            <p>Este es un correo electrónico generado automáticamente por el sistema de agendamiento de citas.</p>
+            <p><strong>Por favor, no responda a este mensaje.</strong></p>
+            <p>Si tiene alguna consulta, comuníquese directamente con nuestras oficinas.</p>
+        </div>
+    </div>
+</body>
+</html>

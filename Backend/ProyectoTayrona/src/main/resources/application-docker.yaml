@@ -1,0 +1,23 @@
+# ============================================
+# Configuración para entorno Docker
+# ============================================
+
+spring:
+  # Deshabilitar Docker Compose automático (ya está corriendo)
+  docker:
+    compose:
+      enabled: false
+  
+  # Configuración JPA para producción
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+# Logging reducido para producción
+logging:
+  level:
+    root: WARN
+    com.tayronadev: INFO
+    org.springframework: WARN
