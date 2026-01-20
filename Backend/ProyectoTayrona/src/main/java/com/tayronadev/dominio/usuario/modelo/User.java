@@ -7,6 +7,8 @@ import lombok.Setter;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.ContraseñaExcepcion;
 
+import java.util.List;
+
 @Getter
 public class User {
 
@@ -45,6 +47,13 @@ public class User {
         }
     }
 
+    //Validar si correo y contraseña existe:
+    public void correoExistente(List<String> lista, String correo){
+        if (!lista.contains(correo)) {
+            throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_NO_EXISTE);
+        }
+    }
+
     // Validar composición de contraseña
     public void validarComposicionContraseña() {
         final int valorContraseña = 8;
@@ -63,7 +72,11 @@ public class User {
      }
 
     //Validar si correo y contraseña existe: 
-   
+   public void contraseñaExistente(List<String> lista, String contraseña){
+            if (!lista.contains(contraseña)) {
+                throw new ContraseñaExcepcion(ContraseñaExcepcion.MENSAJE_CONTRASEÑA_NO_EXISTE);
+            }
+    }
 
     // Validación que se hara accediendo
     //a la base de datos, validar con sebas si hacemos el metodo en el controller
