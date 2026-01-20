@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.ContraseñaExcepcion;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.InicioSesiónExcepcion;
 
 import java.util.List;
 
@@ -47,10 +48,10 @@ public class User {
         }
     }
 
-    //Validar si correo y contraseña existe:
+    //Validar si correo inicio de sesión:
     public void correoExistente(List<String> lista, String correo){
         if (!lista.contains(correo)) {
-            throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_NO_EXISTE);
+            throw new InicioSesiónExcepcion(InicioSesiónExcepcion.INICIO_DE_SESION_INVALIDO);
         }
     }
 
@@ -74,7 +75,7 @@ public class User {
     //Validar si correo y contraseña existe: 
    public void contraseñaExistente(List<String> lista, String contraseña){
             if (!lista.contains(contraseña)) {
-                throw new ContraseñaExcepcion(ContraseñaExcepcion.MENSAJE_CONTRASEÑA_NO_EXISTE);
+                throw new InicioSesiónExcepcion(InicioSesiónExcepcion.INICIO_DE_SESION_INVALIDO);
             }
     }
 

@@ -7,15 +7,20 @@ import java.util.List;
 
 public interface UsuarioRepositorio {
 
+
+    //guardaremos
     User CrearUsuario(User user);
 
     void actualizarUsuario(String id, User user);
 
     void eliminarUsuario(String id);
 
-    User obtenerPorId(String id);
+    User obtenerPorCorreo(String correo);
 
     List<User> obtenerTodos();
 
+    List<String> obtenerCorreos();
+
+    List<String> obtenerNombre();
 
 }

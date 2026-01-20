@@ -3,9 +3,8 @@ package com.tayronadev.dominio.usuario.excepcionesUsuario;
 public class CorreoExcepcion extends UsuarioExcepcion {
 
     public static final String MENSAJE_CORREO_INVALIDO = "El correo electronico no es valido";
-    public static final String MENSAJE_CORREO_VACIO = "El correo electronico no puede estar vacío";
+    public static final String MENSAJE_CORREO_VACIO = "Complete todos los campos";
     public static final String MENSAJE_CORREO_NULO = "El correo electronico no puede ser nulo";
-    public static final String MENSAJE_CORREO_NO_EXISTE = "El usuario ingresado no existe en el sistema";
     
     public CorreoExcepcion(String mensaje) {
         super(mensaje);
