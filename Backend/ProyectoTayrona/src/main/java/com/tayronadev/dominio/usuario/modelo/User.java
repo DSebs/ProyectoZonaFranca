@@ -1,24 +1,35 @@
 package com.tayronadev.dominio.usuario.modelo;
 
-import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.ContraseñaExcepcion;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.InicioSesiónExcepcion;
 
+import java.util.List;
+
+@Getter
 public class User {
 
     private final String id;
     private final String nombre;
     private final String correo;
+    @Setter(AccessLevel.NONE)
     private String contraseña;
+    @Setter
     private boolean cuentaActiva;
+    @Setter
     private TipoUsuario tipoUsuario;
 
-    public User(String id, String nombre, String correo, String contraseña, TipoUsuario tipoUsuario) {
-        this.id = Objects.requireNonNull(id, "El id es obligatorio");
-        this.nombre = Objects.requireNonNull(nombre, "El nombre es obligatorio");
-        this.correo = Objects.requireNonNull(correo, "El email es obligatorio");
-        this.contraseña = Objects.requireNonNull(contraseña, "La contraseña es obligatoria");
-        this.tipoUsuario = Objects.requireNonNull(tipoUsuario, "El tipo de usuario es obligatorio");
+    public User(@NonNull String id, @NonNull String nombre, @NonNull String correo, 
+                @NonNull String contraseña, @NonNull TipoUsuario tipoUsuario) {
+        this.id = id;
+        this.nombre = nombre;
+        this.correo = correo;
+        this.contraseña = contraseña;
+        this.tipoUsuario = tipoUsuario;
         this.cuentaActiva = true;
         
         // Validar que el correo y la contraseña cumplan con los requisitos
@@ -34,6 +45,13 @@ public class User {
         } else if (correo.isEmpty()) {
             throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_VACIO);
         } else if (!correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO);
+        }
+    }
+
+    //Validar si correo inicio de sesión:
+    public void correoExistente(List<String> lista, String correo){
+        if (!lista.contains(correo)) {
             throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO);
         }
     }
@@ -55,47 +73,23 @@ public class User {
         }
      }
 
-     //Validar si correo y contraseña existe: Validación que se hara accediendo
-     //a la base de datos, validar con sebas si hacemos el metodo en el controller
+    //Validar si correo y contraseña existe: 
+   public void contraseñaExistente(List<String> lista, String contraseña){
+            if (!lista.contains(contraseña)) {
+                throw new ContraseñaExcepcion(ContraseñaExcepcion.MENSAJE_CONTRASEÑA_INVALIDA);
+            }
+    }
+
+    // Validación que se hara accediendo
+    //a la base de datos, validar con sebas si hacemos el metodo en el controller
     //public boolean verificarContraseña(String contraseñaAVerificar) {
     //    return Objects.equals(this.contraseña, contraseñaAVerificar);
     //}
 
-     
-
-    // Getters
-    public String getId() {
-        return id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public String getContraseña() {
-        return contraseña;
-    }
-    
-    public boolean isCuentaActiva() {
-        return cuentaActiva;
-    }
-
-    public TipoUsuario getTipoUsuario() {
-        return tipoUsuario;
-    }
-
-    // Setters 
-    public void setContraseña(String contraseña) {
-        this.contraseña = Objects.requireNonNull(contraseña, "La contraseña es obligatoria");
+    // Setter personalizado para contraseña con validación
+    public void setContraseña(@NonNull String contraseña) {
+        this.contraseña = contraseña;
         validarComposicionContraseña();
-    }
-
-    public void setTipoUsuario(TipoUsuario tipoUsuario) {
-        this.tipoUsuario = tipoUsuario;
     }
 
 
