@@ -1,5 +1,7 @@
 package com.tayronadev.dominio.usuario.servicios;
 
+import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.ContraseñaExcepcion;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.InicioSesiónExcepcion;
 import com.tayronadev.dominio.usuario.modelo.User;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +22,7 @@ public class AutenticadorUsuario {
     public void validarCredenciales(User usuario, String contraseñaIngresada) {
         if (usuario == null) {
             log.warn("Intento de inicio de sesión con usuario inexistente");
-            throw new InicioSesiónExcepcion(InicioSesiónExcepcion.INICIO_DE_SESION_INVALIDO);
+            throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO);
         }
 
         if (!usuario.isCuentaActiva()) {
@@ -32,7 +34,7 @@ public class AutenticadorUsuario {
         // Por ahora, comparación simple (esto debe cambiarse)
         if (!Objects.equals(usuario.getContraseña(), contraseñaIngresada)) {
             log.warn("Intento de inicio de sesión con contraseña incorrecta para: {}", usuario.getCorreo());
-            throw new InicioSesiónExcepcion(InicioSesiónExcepcion.INICIO_DE_SESION_INVALIDO);
+            throw new ContraseñaExcepcion("Contraseña incorrecta");
         }
 
         log.debug("Credenciales validadas exitosamente para: {}", usuario.getCorreo());

@@ -52,7 +52,7 @@ public class User {
     //Validar si correo inicio de sesión:
     public void correoExistente(List<String> lista, String correo){
         if (!lista.contains(correo)) {
-            throw new InicioSesiónExcepcion(InicioSesiónExcepcion.INICIO_DE_SESION_INVALIDO);
+            throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO);
         }
     }
 
@@ -76,7 +76,7 @@ public class User {
     //Validar si correo y contraseña existe: 
    public void contraseñaExistente(List<String> lista, String contraseña){
             if (!lista.contains(contraseña)) {
-                throw new InicioSesiónExcepcion(InicioSesiónExcepcion.INICIO_DE_SESION_INVALIDO);
+                throw new ContraseñaExcepcion(ContraseñaExcepcion.MENSAJE_CONTRASEÑA_INVALIDA);
             }
     }
 

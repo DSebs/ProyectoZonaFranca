@@ -4,7 +4,6 @@ import com.tayronadev.dominio.usuario.excepcionesUsuario.UsuarioNoEncontradoExce
 import com.tayronadev.dominio.usuario.modelo.TipoUsuario;
 import com.tayronadev.dominio.usuario.modelo.User;
 import com.tayronadev.dominio.usuario.repositorios.UsuarioRepositorio;
-import com.tayronadev.dominio.usuario.servicios.GestorCuentaUsuario;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,24 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class GestionarUsuarioUseCase {
 
     private final UsuarioRepositorio usuarioRepositorio;
-    private final GestorCuentaUsuario gestorCuentaUsuario;
 
     /**
      * Activa la cuenta de un usuario
      */
     public User activarCuenta(String usuarioId) {
         log.info("Activando cuenta del usuario: {}", usuarioId);
-        var usuario = obtenerUsuarioPorId(usuarioId);
+        User user = obtenerUsuarioPorId(usuarioId);
 
-        if (!gestorCuentaUsuario.puedeSerActivada(usuario)) {
-            throw new IllegalStateException("La cuenta del usuario ya está activa");
-        }
-
-        usuario.setCuentaActiva(true);
-        usuarioRepositorio.actualizarUsuario(usuarioId, usuario);
+        user.setCuentaActiva(true);
+        usuarioRepositorio.actualizarUsuario(usuarioId, user);
 
         log.info("Cuenta activada exitosamente para usuario: {}", usuarioId);
-        return usuario;
+        return user;
     }
 
     /**
@@ -46,10 +40,6 @@ public class GestionarUsuarioUseCase {
     public User desactivarCuenta(String usuarioId) {
         log.info("Desactivando cuenta del usuario: {}", usuarioId);
         var usuario = obtenerUsuarioPorId(usuarioId);
-
-        if (!gestorCuentaUsuario.puedeSerDesactivada(usuario)) {
-            throw new IllegalStateException("La cuenta del usuario ya está inactiva");
-        }
 
         usuario.setCuentaActiva(false);
         usuarioRepositorio.actualizarUsuario(usuarioId, usuario);
@@ -63,17 +53,13 @@ public class GestionarUsuarioUseCase {
      */
     public User cambiarTipoUsuario(String usuarioId, TipoUsuario nuevoTipo) {
         log.info("Cambiando tipo de usuario {} a: {}", usuarioId, nuevoTipo);
-        var usuario = obtenerUsuarioPorId(usuarioId);
+        User user = obtenerUsuarioPorId(usuarioId);
 
-        if (!gestorCuentaUsuario.puedeCambiarTipo(usuario)) {
-            throw new IllegalStateException("No se puede cambiar el tipo de usuario");
-        }
-
-        usuario.setTipoUsuario(nuevoTipo);
-        usuarioRepositorio.actualizarUsuario(usuarioId, usuario);
+        user.setTipoUsuario(nuevoTipo);
+        usuarioRepositorio.actualizarUsuario(usuarioId, user);
 
         log.info("Tipo de usuario cambiado exitosamente para usuario: {}", usuarioId);
-        return usuario;
+        return user;
     }
 
     /**
@@ -82,14 +68,14 @@ public class GestionarUsuarioUseCase {
      */
     public User actualizarContraseña(String usuarioId, String nuevaContraseña) {
         log.info("Actualizando contraseña del usuario: {}", usuarioId);
-        var usuario = obtenerUsuarioPorId(usuarioId);
+        User user = obtenerUsuarioPorId(usuarioId);
 
         // El setter setContraseña() ya valida el formato automáticamente
-        usuario.setContraseña(nuevaContraseña);
-        usuarioRepositorio.actualizarUsuario(usuarioId, usuario);
+        user.setContraseña(nuevaContraseña);
+        usuarioRepositorio.actualizarUsuario(usuarioId, user);
 
         log.info("Contraseña actualizada exitosamente para usuario: {}", usuarioId);
-        return usuario;
+        return user;
     }
 
     /**
@@ -97,7 +83,7 @@ public class GestionarUsuarioUseCase {
      */
     public void eliminarUsuario(String usuarioId) {
         log.info("Eliminando usuario: {}", usuarioId);
-        var usuario = obtenerUsuarioPorId(usuarioId);
+        User user = obtenerUsuarioPorId(usuarioId);
         usuarioRepositorio.eliminarUsuario(usuarioId);
         log.info("Usuario eliminado exitosamente: {}", usuarioId);
     }
