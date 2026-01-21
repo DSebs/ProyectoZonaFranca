@@ -5,6 +5,7 @@ public class CorreoExcepcion extends UsuarioExcepcion {
     public static final String MENSAJE_CORREO_INVALIDO = "El correo electronico no es valido";
     public static final String MENSAJE_CORREO_VACIO = "Complete todos los campos";
     public static final String MENSAJE_CORREO_NULO = "El correo electronico no puede ser nulo";
+    public static final String MENSAJE_CORREO_YA_REGISTRADO = "El correo electrónico ya está registrado";
     
     public CorreoExcepcion(String mensaje) {
         super(mensaje);

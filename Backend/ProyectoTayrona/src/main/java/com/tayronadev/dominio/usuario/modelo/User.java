@@ -18,6 +18,7 @@ public class User {
     private final String correo;
     @Setter(AccessLevel.NONE)
     private String contraseña;
+    @Setter
     private boolean cuentaActiva;
     @Setter
     private TipoUsuario tipoUsuario;
