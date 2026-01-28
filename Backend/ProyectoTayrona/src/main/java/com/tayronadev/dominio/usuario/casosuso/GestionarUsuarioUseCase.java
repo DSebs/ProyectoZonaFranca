@@ -23,29 +23,15 @@ public class GestionarUsuarioUseCase {
     /**
      * Activa la cuenta de un usuario
      */
-    public User activarCuenta(String usuarioId) {
-        log.info("Activando cuenta del usuario: {}", usuarioId);
-        User user = obtenerUsuarioPorId(usuarioId);
-
-        user.setCuentaActiva(true);
-        usuarioRepositorio.actualizarUsuario(usuarioId, user);
-
-        log.info("Cuenta activada exitosamente para usuario: {}", usuarioId);
-        return user;
+    public User activarCuenta(String correo) {
+        return cambiarEstadoCuenta(correo, true);
     }
 
     /**
      * Desactiva la cuenta de un usuario
      */
-    public User desactivarCuenta(String usuarioId) {
-        log.info("Desactivando cuenta del usuario: {}", usuarioId);
-        var usuario = obtenerUsuarioPorId(usuarioId);
-
-        usuario.setCuentaActiva(false);
-        usuarioRepositorio.actualizarUsuario(usuarioId, usuario);
-
-        log.info("Cuenta desactivada exitosamente para usuario: {}", usuarioId);
-        return usuario;
+    public User desactivarCuenta(String correo) {
+        return cambiarEstadoCuenta(correo, false);
     }
 
     /**
@@ -66,8 +52,8 @@ public class GestionarUsuarioUseCase {
      * Actualiza la contraseña de un usuario.
      * La validación de formato se hace en el setter setContraseña() de User.
      */
-    public User actualizarContraseña(String usuarioId, String nuevaContraseña) {
-        log.info("Actualizando contraseña del usuario: {}", usuarioId);
+    public User actualizarUsuario(String usuarioId, String nuevaContraseña) {
+        log.info("Actualizando usuario: {}", usuarioId);
         User user = obtenerUsuarioPorId(usuarioId);
 
         // El setter setContraseña() ya valida el formato automáticamente
@@ -89,8 +75,25 @@ public class GestionarUsuarioUseCase {
     }
 
 
+    private User obatenerUusarioPorCorroe(String correo){
+        return usuarioRepositorio.obtenerPorCorreo(correo)
+                .orElseThrow(() -> new UsuarioNoEncontradoException(correo));
+    }
+
     private User obtenerUsuarioPorId(String usuarioId) {
         return usuarioRepositorio.buscarPorId(usuarioId)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(usuarioId));
+    }
+
+    private User cambiarEstadoCuenta(String correo, boolean estado) {
+        log.info("Cambiando estado de cuenta para el usuario: {} -> {}", correo, estado);
+
+        User user = obatenerUusarioPorCorroe(correo);
+
+        user.setCuentaActiva(estado);
+        usuarioRepositorio.actualizarUsuario(user.getId(), user);
+
+        log.info("Estado de cuenta actualizado correctamente para: {}", correo);
+        return user;
     }
 }

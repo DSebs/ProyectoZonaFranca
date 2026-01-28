@@ -1,7 +1,6 @@
 package com.tayronadev.dominio.usuario.casosuso;
 
 import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
-import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
 import com.tayronadev.dominio.usuario.modelo.User;
 import com.tayronadev.dominio.usuario.repositorios.UsuarioRepositorio;
 import com.tayronadev.dominio.usuario.servicios.AutenticadorUsuario;

@@ -40,7 +40,7 @@ public interface UsuarioRepositorio {
     /**
      * Obtiene un usuario por su correo electrónico
      */
-    User obtenerPorCorreo(String correo);
+    Optional<User> obtenerPorCorreo(String correo);
 
     /**
      * Verifica si existe un usuario con el correo especificado
@@ -77,9 +77,5 @@ public interface UsuarioRepositorio {
      */
     List<String> obtenerCorreos();
 
-    /**
-     * Obtiene lista de nombres (para compatibilidad)
-     */
-    List<String> obtenerNombre();
 
 }

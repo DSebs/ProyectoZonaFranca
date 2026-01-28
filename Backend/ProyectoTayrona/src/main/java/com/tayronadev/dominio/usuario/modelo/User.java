@@ -91,6 +91,4 @@ public class User {
         this.contraseña = contraseña;
         validarComposicionContraseña();
     }
-
-
 }
