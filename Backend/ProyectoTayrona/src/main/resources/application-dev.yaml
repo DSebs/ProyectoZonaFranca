@@ -1,0 +1,34 @@
+# ============================================
+# Configuración para desarrollo local
+# ============================================
+
+spring:
+  # Base de datos local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/citas_db
+    username: postgres
+    password: postgres
+  
+  # JPA con SQL visible
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+  
+  # Correo deshabilitado por defecto en desarrollo
+  mail:
+    host: localhost
+    port: 1025
+
+# Correo deshabilitado para desarrollo
+app:
+  mail:
+    enabled: false
+
+# Logging detallado
+logging:
+  level:
+    root: INFO
+    com.tayronadev: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG

@@ -1,9 +1,88 @@
 services:
+  # Base de datos PostgreSQL
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres:16-alpine'
+    container_name: citas-postgres
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      POSTGRES_DB: ${DB_NAME:-citas_db}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
     ports:
-      - '5432'
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-citas_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - citas-network
+
+  # Aplicación Spring Boot
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: citas-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Base de datos
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-citas_db}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      
+      # Servidor
+      SERVER_PORT: 8080
+      
+      # Correo electrónico (configurar manualmente)
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD_FILE: /run/secrets/mail_password
+      MAIL_FROM: ${MAIL_FROM:-noreply@zonafranca.com}
+      MAIL_ENABLED: ${MAIL_ENABLED:-true}
+      
+      # Información de la empresa
+      EMPRESA_NOMBRE: ${EMPRESA_NOMBRE:-Zona Franca}
+      EMPRESA_TELEFONO: ${EMPRESA_TELEFONO:-}
+      EMPRESA_DIRECCION: ${EMPRESA_DIRECCION:-}
+      
+      # Seguridad
+      ADMIN_PASSWORD_FILE: /run/secrets/admin_password
+      
+      # Spring profiles
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+    secrets:
+      - db_password
+      - mail_password
+      - admin_password
+    ports:
+      - '${APP_PORT:-8080}:8080'
+    networks:
+      - citas-network
+
+# Definición de secretos
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  mail_password:
+    file: ./secrets/mail_password.txt
+  admin_password:
+    file: ./secrets/admin_password.txt
+
+# Volúmenes persistentes
+volumes:
+  postgres_data:
+    driver: local
+
+# Red interna
+networks:
+  citas-network:
+    driver: bridge

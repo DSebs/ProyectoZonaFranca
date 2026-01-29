@@ -16,7 +16,14 @@ import java.time.LocalDateTime;
  * Entidad JPA para persistir citas
  */
 @Entity
-@Table(name = "citas")
+@Table(name = "citas", indexes = {
+    @Index(name = "idx_cita_estado", columnList = "estado"),
+    @Index(name = "idx_cita_tipo", columnList = "tipo_cita"),
+    @Index(name = "idx_cita_nit", columnList = "nit"),
+    @Index(name = "idx_cita_fecha_hora", columnList = "fecha_hora"),
+    @Index(name = "idx_cita_tipo_estado", columnList = "tipo_cita, estado"),
+    @Index(name = "idx_cita_fecha_creacion", columnList = "fecha_creacion")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -103,17 +110,6 @@ public class CitaEntity {
     @UpdateTimestamp
     @Column(name = "fecha_ultima_modificacion", nullable = false)
     private LocalDateTime fechaUltimaModificacion;
-    
-    // Índices para consultas frecuentes
-    @Table(indexes = {
-        @Index(name = "idx_cita_estado", columnList = "estado"),
-        @Index(name = "idx_cita_tipo", columnList = "tipo_cita"),
-        @Index(name = "idx_cita_nit", columnList = "nit"),
-        @Index(name = "idx_cita_fecha_hora", columnList = "fecha_hora"),
-        @Index(name = "idx_cita_tipo_estado", columnList = "tipo_cita, estado"),
-        @Index(name = "idx_cita_fecha_creacion", columnList = "fecha_creacion")
-    })
-    public static class Indices {}
     
     /**
      * Enum para el tipo de transporte en JPA

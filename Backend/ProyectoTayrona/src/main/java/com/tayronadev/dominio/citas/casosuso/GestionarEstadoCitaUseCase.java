@@ -4,46 +4,69 @@ import com.tayronadev.dominio.citas.excepciones.CitaNoEncontradaException;
 import com.tayronadev.dominio.citas.modelo.Cita;
 import com.tayronadev.dominio.citas.repositorios.CitaRepositorio;
 import com.tayronadev.dominio.citas.servicios.GestorEstadosCita;
+import com.tayronadev.dominio.notificacion.casosuso.NotificarCambioEstadoCitaUseCase;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Caso de uso para gestionar los estados de las citas
+ * Caso de uso para gestionar los estados de las citas.
+ * Integra el envío de notificaciones al proveedor cuando cambia el estado.
  */
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class GestionarEstadoCitaUseCase {
     
     private final CitaRepositorio citaRepositorio;
     private final GestorEstadosCita gestorEstados;
+    private final NotificarCambioEstadoCitaUseCase notificarCambioEstado;
     
     /**
-     * Confirma una cita pendiente
+     * Confirma una cita pendiente y notifica al proveedor
      */
     public Cita confirmarCita(String citaId, String observaciones) {
         var cita = obtenerCitaPorId(citaId);
         cita.confirmar(observaciones);
-        return citaRepositorio.guardar(cita);
+        var citaGuardada = citaRepositorio.guardar(cita);
+        
+        // Notificar al proveedor (asíncrono)
+        notificarCambioEstado.ejecutar(citaGuardada, observaciones);
+        
+        log.info("Cita {} confirmada y notificación enviada", citaId);
+        return citaGuardada;
     }
     
     /**
-     * Rechaza una cita pendiente
+     * Rechaza una cita pendiente y notifica al proveedor con el motivo
      */
     public Cita rechazarCita(String citaId, String motivoRechazo) {
         var cita = obtenerCitaPorId(citaId);
         cita.rechazar(motivoRechazo);
-        return citaRepositorio.guardar(cita);
+        var citaGuardada = citaRepositorio.guardar(cita);
+        
+        // Notificar al proveedor (asíncrono)
+        notificarCambioEstado.ejecutar(citaGuardada, motivoRechazo);
+        
+        log.info("Cita {} rechazada y notificación enviada", citaId);
+        return citaGuardada;
     }
     
     /**
-     * Cancela una cita (pendiente o confirmada)
+     * Cancela una cita (pendiente o confirmada) y notifica al proveedor
      */
     public Cita cancelarCita(String citaId, String motivoCancelacion) {
         var cita = obtenerCitaPorId(citaId);
         cita.cancelar(motivoCancelacion);
-        return citaRepositorio.guardar(cita);
+        var citaGuardada = citaRepositorio.guardar(cita);
+        
+        // Notificar al proveedor (asíncrono)
+        notificarCambioEstado.ejecutar(citaGuardada, motivoCancelacion);
+        
+        log.info("Cita {} cancelada y notificación enviada", citaId);
+        return citaGuardada;
     }
     
     /**
