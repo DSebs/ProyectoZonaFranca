@@ -20,12 +20,12 @@ public interface UsuarioRepositorio {
     /**
      * Crea un nuevo usuario (alias de guardar para compatibilidad)
      */
-    User CrearUsuario(User user);
+    User crearUsuario(User user);
 
     /**
-     * Actualiza un usuario existente
+     * Actualiza un usuario existente (persiste el estado actual del User)
      */
-    void actualizarUsuario(String id, User user);
+    void actualizarUsuario(User user);
 
     /**
      * Elimina un usuario

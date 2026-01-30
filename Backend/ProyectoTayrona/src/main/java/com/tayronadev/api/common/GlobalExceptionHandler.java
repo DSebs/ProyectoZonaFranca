@@ -3,6 +3,9 @@ package com.tayronadev.api.common;
 import com.tayronadev.dominio.citas.excepciones.CitaNoEncontradaException;
 import com.tayronadev.dominio.citas.excepciones.EstadoCitaInvalidoException;
 import com.tayronadev.dominio.citas.excepciones.HorarioNoDisponibleException;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.ContraseñaExcepcion;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.InicioSesiónExcepcion;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -114,6 +117,68 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
     
+    /**
+     * Correo inválido, no encontrado (login) o ya registrado (registro).
+     */
+    @ExceptionHandler(CorreoExcepcion.class)
+    public ResponseEntity<ErrorResponse> handleCorreoExcepcion(
+            CorreoExcepcion ex,
+            HttpServletRequest request) {
+        log.warn("Error de correo: {}", ex.getMessage());
+        boolean correoYaRegistrado = ex.getMessage() != null
+                && ex.getMessage().contains("registrado");
+        if (correoYaRegistrado) {
+            var response = ErrorResponse.of(
+                    ex.getMessage(),
+                    "Correo Ya Registrado",
+                    HttpStatus.CONFLICT.value(),
+                    request.getRequestURI()
+            );
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+        var response = ErrorResponse.of(
+                "Credenciales inválidas",
+                "No Autorizado",
+                HttpStatus.UNAUTHORIZED.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    /**
+     * Contraseña incorrecta en login.
+     */
+    @ExceptionHandler(ContraseñaExcepcion.class)
+    public ResponseEntity<ErrorResponse> handleContraseñaExcepcion(
+            ContraseñaExcepcion ex,
+            HttpServletRequest request) {
+        log.warn("Error de contraseña: {}", ex.getMessage());
+        var response = ErrorResponse.of(
+                "Credenciales inválidas",
+                "No Autorizado",
+                HttpStatus.UNAUTHORIZED.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    /**
+     * Cuenta inactiva (no puede iniciar sesión).
+     */
+    @ExceptionHandler(InicioSesiónExcepcion.class)
+    public ResponseEntity<ErrorResponse> handleInicioSesionExcepcion(
+            InicioSesiónExcepcion ex,
+            HttpServletRequest request) {
+        log.warn("Intento de login con cuenta inactiva: {}", ex.getMessage());
+        var response = ErrorResponse.of(
+                ex.getMessage(),
+                "Cuenta Inactiva",
+                HttpStatus.FORBIDDEN.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
     /**
      * Maneja errores de argumentos ilegales (validaciones de dominio)
      */

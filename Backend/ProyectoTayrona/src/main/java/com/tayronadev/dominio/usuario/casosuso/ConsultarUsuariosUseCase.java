@@ -36,13 +36,11 @@ public class ConsultarUsuariosUseCase {
     /**
      * Busca un usuario por su correo electrónico
      */
-    public User buscarPorCorreo(String correo) {
+
+    public User obtenerUsuarioPorCorreo(String correo){
         log.debug("Buscando usuario con correo: {}", correo);
-        User user = usuarioRepositorio.obtenerPorCorreo(correo);
-        if (user == null) {
-            throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO + "correo: " + correo);
-        }
-        return user;
+        return usuarioRepositorio.obtenerPorCorreo(correo)
+                .orElseThrow(() -> new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO));
     }
 
     /**

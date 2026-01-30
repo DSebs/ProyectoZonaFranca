@@ -6,6 +6,7 @@ import com.tayronadev.dominio.usuario.repositorios.UsuarioRepositorio;
 import com.tayronadev.dominio.usuario.servicios.ValidadorUsuario;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class CrearUsuarioUseCase {
 
     private final UsuarioRepositorio usuarioRepositorio;
     private final ValidadorUsuario validadorUsuario;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Crea un nuevo usuario.
@@ -39,7 +41,13 @@ public class CrearUsuarioUseCase {
         String id = generarId();
 
         // Crear el nuevo usuario (el constructor ya valida formato de correo y contraseña)
-        var nuevoUsuario = new User(id, nombre, correo, contraseña, tipoUsuario);
+        var nuevoUsuario = new User(
+                id,
+                nombre,
+                correo,
+                passwordEncoder.encode(contraseña),
+                tipoUsuario
+        );
 
         // Guardar en repositorio
         var usuarioGuardado = usuarioRepositorio.guardar(nuevoUsuario);

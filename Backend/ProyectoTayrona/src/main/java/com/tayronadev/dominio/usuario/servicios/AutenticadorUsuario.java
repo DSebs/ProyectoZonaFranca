@@ -27,14 +27,14 @@ public class AutenticadorUsuario {
 
         if (!usuario.isCuentaActiva()) {
             log.warn("Intento de inicio de sesión con cuenta inactiva: {}", usuario.getCorreo());
-            throw new InicioSesiónExcepcion("La cuenta está desactivada");
+            throw new InicioSesiónExcepcion(InicioSesiónExcepcion.CUENTA_INACTIVA);
         }
 
         // Nota: En producción, la contraseña debe estar hasheada y compararse con BCrypt o similar
         // Por ahora, comparación simple (esto debe cambiarse)
         if (!Objects.equals(usuario.getContraseña(), contraseñaIngresada)) {
             log.warn("Intento de inicio de sesión con contraseña incorrecta para: {}", usuario.getCorreo());
-            throw new ContraseñaExcepcion("Contraseña incorrecta");
+            throw new ContraseñaExcepcion(ContraseñaExcepcion.MENSAJE_CONTRASEÑA_INCORRECTA);
         }
 
         log.debug("Credenciales validadas exitosamente para: {}", usuario.getCorreo());

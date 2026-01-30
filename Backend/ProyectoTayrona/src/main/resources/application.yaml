@@ -65,6 +65,14 @@ spring:
       name: admin
       password: ${ADMIN_PASSWORD:admin123}
 
+application:
+  security:
+    jwt:
+      secret-key: ${Secret-key}
+      expiration: 3600000        # 1 hora
+      refresh-token:
+        expiration: 604800000
+
 # Configuración personalizada de la aplicación
 app:
   # Configuración de correo

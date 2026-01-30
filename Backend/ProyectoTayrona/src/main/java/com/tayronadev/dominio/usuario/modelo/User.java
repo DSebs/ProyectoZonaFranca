@@ -15,7 +15,8 @@ public class User {
 
     private final String id;
     private final String nombre;
-    private final String correo;
+    @Setter
+    private String correo;
     @Setter(AccessLevel.NONE)
     private String contraseña;
     @Setter
@@ -23,7 +24,7 @@ public class User {
     @Setter
     private TipoUsuario tipoUsuario;
 
-    public User(@NonNull String id, @NonNull String nombre, @NonNull String correo, 
+    public User(String id, @NonNull String nombre, @NonNull String correo,
                 @NonNull String contraseña, @NonNull TipoUsuario tipoUsuario) {
         this.id = id;
         this.nombre = nombre;
@@ -56,10 +57,12 @@ public class User {
         }
     }
 
-    // Validar composición de contraseña
+    // Validar composición de contraseña (no valida si ya está hasheada, ej. BCrypt)
     public void validarComposicionContraseña() {
+        if (contraseña != null && contraseña.startsWith("$2")) {
+            return; // Contraseña ya hasheada (BCrypt)
+        }
         final int valorContraseña = 8;
-
         if (contraseña == null) {
             throw new ContraseñaExcepcion(ContraseñaExcepcion.MENSAJE_CONTRASEÑA_NULA);
         } else if (contraseña.isEmpty()) {
