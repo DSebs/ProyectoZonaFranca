@@ -6,6 +6,7 @@ import com.tayronadev.dominio.usuario.repositorios.UsuarioRepositorio;
 import com.tayronadev.dominio.usuario.servicios.ValidadorUsuario;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

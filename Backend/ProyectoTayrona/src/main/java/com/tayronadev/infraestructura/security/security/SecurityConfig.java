@@ -10,10 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * Configuración de seguridad: JWT en cada petición, sesión stateless.
- * Rutas públicas: login, registro, actuator. El resto exige token válido.
- */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

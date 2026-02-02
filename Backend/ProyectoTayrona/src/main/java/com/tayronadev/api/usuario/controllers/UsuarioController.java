@@ -18,6 +18,7 @@ import com.tayronadev.dominio.usuario.servicios.Jwt;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,77 +35,64 @@ public class UsuarioController {
     private final Jwt jwt;
     private final UsuarioDtoMapper mapper;
 
-    @PostMapping("/cretaeUser")
-    public ResponseEntity<UsuarioResponse> sinIn(@Valid @RequestBody CrearUsuarioRequest request) {
-         log.info("Creando nuevo usuario: {}", request.getInformacionUsuarioRequest());
+    @PostMapping("/createUser")
+    public ResponseEntity<UsuarioResponse> createUser(@Valid @RequestBody CrearUsuarioRequest request) {
+        log.info("Creando nuevo usuario: {}", mapper.toCorreo(request));
 
-            User user = crearUsuarioUseCase.ejecutar(
-                    request.getInformacionUsuarioRequest().getNombreUsuario(),
-                    request.getInformacionUsuarioRequest().getCorreo(),
-                    request.getInformacionUsuarioRequest().getContraseña(),
-                    request.getTipoUsuario());
+        User user = crearUsuarioUseCase.ejecutar(
+                mapper.toNombre(request),
+                mapper.toCorreo(request),
+                mapper.toContraseña(request),
+                mapper.toTipoUsuario(request)
+        );
 
-            UsuarioResponse response = mapper.toUsuarioResponse(user);
-            log.info("Login exitoso para usuario: {} ({})", user.getNombre(), user.getCorreo());
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(mapper.toUsuarioResponse(user));
     }
 
-
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> logIn(@Valid @RequestBody IniciarSesionRequest request) {
-        log.info("Intento de inicio de sesión para correo: {}", request.getCorreo());
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody IniciarSesionRequest request) {
+        log.info("Intento de inicio de sesión para correo: {}", mapper.toCorreo(request));
 
-        User user = autenticarUsuarioUseCase.ejecutar(request.getCorreo(), request.getContraseña());
+        User user = autenticarUsuarioUseCase.ejecutar(
+                mapper.toCorreo(request),
+                mapper.toContraseña(request)
+        );
 
         String token = jwt.generarToken(user);
         String refreshToken = jwt.generarReinicioToken(user);
 
-        LoginResponse response = mapper.toLoginResponse(user, token, refreshToken);
-
-        log.info("Login exitoso para usuario: {} ({})", user.getNombre(), user.getCorreo());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(mapper.toLoginResponse(user, token, refreshToken));
     }
 
     @PostMapping("/updateUser")
-    public ResponseEntity<ConfirmarResponse> updateUser(@Valid @RequestBody ActualizarUsuarioRequest request){
-        log.info("Actualizando datos de usuario: {}", request.getCorreo());
+    public ResponseEntity<ConfirmarResponse> updateUser(@Valid @RequestBody ActualizarUsuarioRequest request) {
+        log.info("Actualizando datos de usuario: {}", mapper.toCorreo(request));
 
         User user = gestionarUsuarioUseCase.actualizarUsuario(
-                request.getCorreo(),
-                request.getNuevaContraseña(),
-                request.getTipoUsuario(),
-                request.getCuentaActiva());
+                mapper.toCorreo(request),
+                mapper.toNuevaContraseña(request),
+                mapper.toTipoUsuario(request),
+                mapper.toCuentaActiva(request)
+        );
 
-        return ResponseEntity.ok(ConfirmarResponse.builder()
-                .mensaje("Usuario actualizado correctamente:" + " " + user.getCorreo())
-                .build());
-
+        return ResponseEntity.ok(mapper.toConfirmarResponseActualizacion(user));
     }
 
-
-    @GetMapping("/ListUsers")
-    public ResponseEntity<ListaUsuariosResponse> listUser(){
+    @GetMapping("/listUsers")
+    public ResponseEntity<ListaUsuariosResponse> listUsers() {
         log.info("Obteniendo todos los usuarios");
 
         var usuarios = consultarUsuariosUseCase.obtenerTodos();
-
-        ListaUsuariosResponse listaUsuariosResponse = mapper.toListaUsuariosResponse(usuarios);
-
-        return ResponseEntity.ok(listaUsuariosResponse);
-
+        return ResponseEntity.ok(mapper.toListaUsuariosResponse(usuarios));
     }
 
-    @DeleteMapping("/DeleteUser")
-    public ResponseEntity<ConfirmarResponse> eliminarUsuario(@RequestBody EliminarUsuarioRequest eliminarUsuarioRequest){
+    @DeleteMapping("/deleteUser")
+    public ResponseEntity<ConfirmarResponse> deleteUser(@Valid @RequestBody EliminarUsuarioRequest request) {
+        String correo = mapper.toCorreo(request);
+        log.info("Eliminando usuario: {}", correo);
 
-        gestionarUsuarioUseCase.eliminarUsuario(eliminarUsuarioRequest.getCorreo());
+        gestionarUsuarioUseCase.eliminarUsuario(correo);
 
-        return ResponseEntity.ok(ConfirmarResponse.builder()
-                .mensaje("Usuario eliminado correctamente")
-                .build());
-
+        return ResponseEntity.ok(mapper.toConfirmarResponse("Usuario eliminado correctamente"));
     }
-
-
-
 }

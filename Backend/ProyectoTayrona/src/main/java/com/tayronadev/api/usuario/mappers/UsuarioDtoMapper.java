@@ -1,6 +1,10 @@
 package com.tayronadev.api.usuario.mappers;
 
+import com.tayronadev.api.usuario.dto.request.ActualizarUsuarioRequest;
 import com.tayronadev.api.usuario.dto.request.CrearUsuarioRequest;
+import com.tayronadev.api.usuario.dto.request.EliminarUsuarioRequest;
+import com.tayronadev.api.usuario.dto.request.IniciarSesionRequest;
+import com.tayronadev.api.usuario.dto.response.ConfirmarResponse;
 import com.tayronadev.api.usuario.dto.response.ListaUsuariosResponse;
 import com.tayronadev.api.usuario.dto.response.LoginResponse;
 import com.tayronadev.api.usuario.dto.response.UsuarioEliminadoResponse;
@@ -12,41 +16,59 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Mapper para convertir entre DTOs de la API de usuario y objetos de dominio (User).
- * Sigue la misma lógica que {@link com.tayronadev.api.citas.mappers.CitaDtoMapper}.
- */
 @Component
 public class UsuarioDtoMapper {
 
-    // ==================== Request -> parámetros para casos de uso ====================
+    // ==================== CrearUsuarioRequest ====================
 
-    /**
-     * Extrae nombre del request de creación de usuario.
-     */
     public String toNombre(CrearUsuarioRequest request) {
         return request.getInformacionUsuarioRequest().getNombreUsuario();
     }
 
-    /**
-     * Extrae correo del request de creación de usuario.
-     */
     public String toCorreo(CrearUsuarioRequest request) {
         return request.getInformacionUsuarioRequest().getCorreo();
     }
 
-    /**
-     * Extrae contraseña del request de creación de usuario.
-     */
     public String toContraseña(CrearUsuarioRequest request) {
         return request.getInformacionUsuarioRequest().getContraseña();
     }
 
-    /**
-     * Extrae tipo de usuario del request de creación.
-     */
     public TipoUsuario toTipoUsuario(CrearUsuarioRequest request) {
         return request.getTipoUsuario();
+    }
+
+    // ==================== IniciarSesionRequest ====================
+
+    public String toCorreo(IniciarSesionRequest request) {
+        return request.getCorreo();
+    }
+
+    public String toContraseña(IniciarSesionRequest request) {
+        return request.getContraseña();
+    }
+
+    // ==================== ActualizarUsuarioRequest ====================
+
+    public String toCorreo(ActualizarUsuarioRequest request) {
+        return request.getCorreo();
+    }
+
+    public String toNuevaContraseña(ActualizarUsuarioRequest request) {
+        return request.getNuevaContraseña();
+    }
+
+    public TipoUsuario toTipoUsuario(ActualizarUsuarioRequest request) {
+        return request.getTipoUsuario();
+    }
+
+    public Boolean toCuentaActiva(ActualizarUsuarioRequest request) {
+        return request.getCuentaActiva();
+    }
+
+    // ==================== EliminarUsuarioRequest ====================
+
+    public String toCorreo(EliminarUsuarioRequest request) {
+        return request.getCorreo();
     }
 
     // ==================== Dominio -> Response ====================
@@ -91,6 +113,26 @@ public class UsuarioDtoMapper {
                 .refreshToken(refreshToken)
                 .usuarioId(user.getId())
                 .rol(user.getTipoUsuario().getDescripcion())
+                .build();
+    }
+
+    // ==================== ConfirmarResponse (mensajes de confirmación) ====================
+
+    /**
+     * Respuesta de confirmación con mensaje genérico (ej. eliminación).
+     */
+    public ConfirmarResponse toConfirmarResponse(String mensaje) {
+        return ConfirmarResponse.builder()
+                .mensaje(mensaje)
+                .build();
+    }
+
+    /**
+     * Respuesta de confirmación tras actualizar usuario.
+     */
+    public ConfirmarResponse toConfirmarResponseActualizacion(User user) {
+        return ConfirmarResponse.builder()
+                .mensaje("Usuario actualizado correctamente: " + user.getCorreo())
                 .build();
     }
 }

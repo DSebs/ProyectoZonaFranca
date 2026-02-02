@@ -17,10 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
-/**
- * Filtro que lee el token JWT del header Authorization: Bearer &lt;token&gt;
- * y establece el SecurityContext con el usuario (correo como principal).
- */
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -59,7 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             log.debug("Token JWT inválido o expirado: {}", e.getMessage());
-            // No establecer autenticación; las rutas protegidas devolverán 401
         }
 
         filterChain.doFilter(request, response);
