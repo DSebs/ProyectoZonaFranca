@@ -1,7 +1,6 @@
 package com.tayronadev.dominio.usuario.casosuso;
 
 import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
-import com.tayronadev.dominio.usuario.excepcionesUsuario.UsuarioNoEncontradoException;
 import com.tayronadev.dominio.usuario.modelo.TipoUsuario;
 import com.tayronadev.dominio.usuario.modelo.User;
 import com.tayronadev.dominio.usuario.repositorios.UsuarioRepositorio;
@@ -28,34 +27,6 @@ public class GestionarUsuarioUseCase {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * Activa la cuenta de un usuario
-     */
-    public User activarCuenta(String correo) {
-        return cambiarEstadoCuenta(correo, true);
-    }
-
-    /**
-     * Desactiva la cuenta de un usuario
-     */
-    public User desactivarCuenta(String correo) {
-        return cambiarEstadoCuenta(correo, false);
-    }
-
-    /**
-     * Actualiza el tipo de usuario
-     */
-    public User cambiarTipoUsuario(String correo, TipoUsuario nuevoTipo) {
-        log.info("Cambiando tipo de usuario {} a: {}", correo, nuevoTipo);
-        User user = obtenerUsuarioPorCorreo(correo);
-
-        user.setTipoUsuario(nuevoTipo);
-        usuarioRepositorio.actualizarUsuario(user);
-
-        log.info("Tipo de usuario cambiado exitosamente para usuario: {}", correo);
-        return user;
-    }
-
-    /**
      * Actualiza el correo de un usuario.
      * Valida que no esté duplicado usando ValidadorUsuario.
      */
@@ -80,12 +51,15 @@ public class GestionarUsuarioUseCase {
      * Actualiza la contraseña de un usuario.
      * La validación de formato se hace en el setter setContraseña() de User.
      */
-    public User actualizarUsuario(String correo, String nuevaContraseña) {
+    public User actualizarUsuario(String correo, String nuevaContraseña, TipoUsuario nuevoTipo, Boolean estado) {
         log.info("Actualizando usuario: {}", correo);
         User user = obtenerUsuarioPorCorreo(correo);
 
-        // Hashear la contraseña antes de asignar; el setter valida formato
+
         user.setContraseña(passwordEncoder.encode(nuevaContraseña));
+        user.setTipoUsuario(nuevoTipo);
+        user.setCuentaActiva(estado);
+
         usuarioRepositorio.actualizarUsuario(user);
 
         log.info("Contraseña actualizada exitosamente para usuario: {}", correo);
@@ -95,32 +69,19 @@ public class GestionarUsuarioUseCase {
     /**
      * Elimina un usuario (eliminación lógica o física según implementación)
      */
-    public void eliminarUsuario(String correo) {
+    public String eliminarUsuario(String correo) {
         log.info("Eliminando usuario: {}", correo);
         User user = obtenerUsuarioPorCorreo(correo);
-        usuarioRepositorio.eliminarUsuario(user.getId());
+        usuarioRepositorio.eliminarUsuario(correo);
         log.info("Usuario eliminado exitosamente: {}", correo);
+        return correo;
     }
 
     /**
      * Metodos de usuario)
      */
-
-
     public User obtenerUsuarioPorCorreo(String correo){
         return usuarioRepositorio.obtenerPorCorreo(correo)
                 .orElseThrow(() -> new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO));
-    }
-
-    private User cambiarEstadoCuenta(String correo, boolean estado) {
-        log.info("Cambiando estado de cuenta para el usuario: {} -> {}", correo, estado);
-
-        User user = obtenerUsuarioPorCorreo(correo);
-
-        user.setCuentaActiva(estado);
-        usuarioRepositorio.actualizarUsuario(user);
-
-        log.info("Estado de cuenta actualizado correctamente para: {}", correo);
-        return user;
     }
 }

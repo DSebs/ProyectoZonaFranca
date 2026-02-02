@@ -17,10 +17,6 @@ public interface UsuarioRepositorio {
      */
     User guardar(User user);
 
-    /**
-     * Crea un nuevo usuario (alias de guardar para compatibilidad)
-     */
-    User crearUsuario(User user);
 
     /**
      * Actualiza un usuario existente (persiste el estado actual del User)

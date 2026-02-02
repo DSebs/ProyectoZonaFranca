@@ -35,12 +35,6 @@ public class UsuarioRepositorioImpl implements UsuarioRepositorio {
     }
     
     @Override
-    public User crearUsuario(User user) {
-        log.debug("Creando nuevo usuario con correo: {}", user.getCorreo());
-        return guardar(user);
-    }
-    
-    @Override
     public void actualizarUsuario(User user) {
         log.debug("Actualizando usuario con ID: {}", user.getId());
         var entity = mapper.toEntity(user);

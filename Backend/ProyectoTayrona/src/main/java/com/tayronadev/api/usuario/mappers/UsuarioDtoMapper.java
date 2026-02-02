@@ -83,16 +83,6 @@ public class UsuarioDtoMapper {
     }
 
     /**
-     * Convierte un User a UsuarioEliminadoResponse (tras eliminación).
-     */
-    public UsuarioEliminadoResponse toUsuarioEliminadoResponse(User user) {
-        return UsuarioEliminadoResponse.builder()
-                .correo(user.getCorreo())
-                .tipoUsuario(user.getTipoUsuario())
-                .build();
-    }
-
-    /**
      * Construye LoginResponse a partir del User y los tokens generados.
      */
     public LoginResponse toLoginResponse(User user, String token, String refreshToken) {

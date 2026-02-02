@@ -23,11 +23,7 @@ public class CrearUsuarioUseCase {
     private final ValidadorUsuario validadorUsuario;
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * Crea un nuevo usuario.
-     * Las validaciones de formato se hacen en el constructor de User.
-     * Este caso de uso valida duplicados (requiere contexto externo).
-     */
+
     public User ejecutar(String nombre, String correo, String contraseña, TipoUsuario tipoUsuario) {
         log.info("Iniciando creación de usuario con correo: {} - Tipo: {}", correo, tipoUsuario);
 

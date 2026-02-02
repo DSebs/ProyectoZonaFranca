@@ -14,5 +14,5 @@ public class UsuarioResponse {
     String nombre;
     String correo;
     TipoUsuario tipoUsuario;
-    boolean cuentaActiva;
+    Boolean cuentaActiva;
 }

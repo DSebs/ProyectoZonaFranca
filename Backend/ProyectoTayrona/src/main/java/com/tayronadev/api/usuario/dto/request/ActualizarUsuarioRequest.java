@@ -17,16 +17,18 @@ public class ActualizarUsuarioRequest {
     @Email(message = "El correo no es válido")
     private String correo;
 
+    private String contraseña;
+
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[0-9]).*$",
             message = "La contraseña debe contener al menos una mayúscula y un número"
     )
-    private String contraseña;
+    private String nuevaContraseña;
 
     @NotNull(message = "El tipo de usuario es obligatorio")
     private TipoUsuario tipoUsuario;
 
-    private boolean cuentaActiva;
+    private Boolean cuentaActiva;
 }
