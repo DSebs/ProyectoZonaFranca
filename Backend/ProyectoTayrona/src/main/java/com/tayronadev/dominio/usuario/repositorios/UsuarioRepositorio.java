@@ -17,15 +17,11 @@ public interface UsuarioRepositorio {
      */
     User guardar(User user);
 
-    /**
-     * Crea un nuevo usuario (alias de guardar para compatibilidad)
-     */
-    User CrearUsuario(User user);
 
     /**
-     * Actualiza un usuario existente
+     * Actualiza un usuario existente (persiste el estado actual del User)
      */
-    void actualizarUsuario(String id, User user);
+    void actualizarUsuario(User user);
 
     /**
      * Elimina un usuario
@@ -40,7 +36,7 @@ public interface UsuarioRepositorio {
     /**
      * Obtiene un usuario por su correo electrónico
      */
-    User obtenerPorCorreo(String correo);
+    Optional<User> obtenerPorCorreo(String correo);
 
     /**
      * Verifica si existe un usuario con el correo especificado
@@ -77,9 +73,5 @@ public interface UsuarioRepositorio {
      */
     List<String> obtenerCorreos();
 
-    /**
-     * Obtiene lista de nombres (para compatibilidad)
-     */
-    List<String> obtenerNombre();
 
 }

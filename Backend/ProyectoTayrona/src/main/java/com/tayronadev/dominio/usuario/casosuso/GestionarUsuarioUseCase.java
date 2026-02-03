@@ -1,13 +1,17 @@
 package com.tayronadev.dominio.usuario.casosuso;
 
-import com.tayronadev.dominio.usuario.excepcionesUsuario.UsuarioNoEncontradoException;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
 import com.tayronadev.dominio.usuario.modelo.TipoUsuario;
 import com.tayronadev.dominio.usuario.modelo.User;
 import com.tayronadev.dominio.usuario.repositorios.UsuarioRepositorio;
+import com.tayronadev.dominio.usuario.servicios.ValidadorUsuario;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Caso de uso para gestionar usuarios (activar, desactivar, actualizar)
@@ -19,78 +23,65 @@ import org.springframework.transaction.annotation.Transactional;
 public class GestionarUsuarioUseCase {
 
     private final UsuarioRepositorio usuarioRepositorio;
+    private final ValidadorUsuario validadorUsuario;
+    private final PasswordEncoder passwordEncoder;
 
     /**
-     * Activa la cuenta de un usuario
+     * Actualiza el correo de un usuario.
+     * Valida que no esté duplicado usando ValidadorUsuario.
      */
-    public User activarCuenta(String usuarioId) {
-        log.info("Activando cuenta del usuario: {}", usuarioId);
-        User user = obtenerUsuarioPorId(usuarioId);
+    public User actualizarCorreo(String correoActual, String nuevoCorreo, List<String> correosExistentes) {
+        log.info("Actualizando correo del usuario: {}", correoActual);
 
-        user.setCuentaActiva(true);
-        usuarioRepositorio.actualizarUsuario(usuarioId, user);
+        User user = obtenerUsuarioPorCorreo(correoActual);
 
-        log.info("Cuenta activada exitosamente para usuario: {}", usuarioId);
+        // Validar duplicados
+        validadorUsuario.validarActualizacionUsuario(user, nuevoCorreo, correosExistentes);
+
+        // Actualizar correo
+        user.setCorreo(nuevoCorreo);
+        usuarioRepositorio.actualizarUsuario(user);
+
+        log.info("Correo actualizado exitosamente para usuario: {}", nuevoCorreo);
         return user;
     }
 
-    /**
-     * Desactiva la cuenta de un usuario
-     */
-    public User desactivarCuenta(String usuarioId) {
-        log.info("Desactivando cuenta del usuario: {}", usuarioId);
-        var usuario = obtenerUsuarioPorId(usuarioId);
-
-        usuario.setCuentaActiva(false);
-        usuarioRepositorio.actualizarUsuario(usuarioId, usuario);
-
-        log.info("Cuenta desactivada exitosamente para usuario: {}", usuarioId);
-        return usuario;
-    }
-
-    /**
-     * Actualiza el tipo de usuario
-     */
-    public User cambiarTipoUsuario(String usuarioId, TipoUsuario nuevoTipo) {
-        log.info("Cambiando tipo de usuario {} a: {}", usuarioId, nuevoTipo);
-        User user = obtenerUsuarioPorId(usuarioId);
-
-        user.setTipoUsuario(nuevoTipo);
-        usuarioRepositorio.actualizarUsuario(usuarioId, user);
-
-        log.info("Tipo de usuario cambiado exitosamente para usuario: {}", usuarioId);
-        return user;
-    }
 
     /**
      * Actualiza la contraseña de un usuario.
      * La validación de formato se hace en el setter setContraseña() de User.
      */
-    public User actualizarContraseña(String usuarioId, String nuevaContraseña) {
-        log.info("Actualizando contraseña del usuario: {}", usuarioId);
-        User user = obtenerUsuarioPorId(usuarioId);
+    public User actualizarUsuario(String correo, String nuevaContraseña, TipoUsuario nuevoTipo, Boolean estado) {
+        log.info("Actualizando usuario: {}", correo);
+        User user = obtenerUsuarioPorCorreo(correo);
 
-        // El setter setContraseña() ya valida el formato automáticamente
-        user.setContraseña(nuevaContraseña);
-        usuarioRepositorio.actualizarUsuario(usuarioId, user);
 
-        log.info("Contraseña actualizada exitosamente para usuario: {}", usuarioId);
+        user.setContraseña(passwordEncoder.encode(nuevaContraseña));
+        user.setTipoUsuario(nuevoTipo);
+        user.setCuentaActiva(estado);
+
+        usuarioRepositorio.actualizarUsuario(user);
+
+        log.info("Contraseña actualizada exitosamente para usuario: {}", correo);
         return user;
     }
 
     /**
      * Elimina un usuario (eliminación lógica o física según implementación)
      */
-    public void eliminarUsuario(String usuarioId) {
-        log.info("Eliminando usuario: {}", usuarioId);
-        User user = obtenerUsuarioPorId(usuarioId);
-        usuarioRepositorio.eliminarUsuario(usuarioId);
-        log.info("Usuario eliminado exitosamente: {}", usuarioId);
+    public String eliminarUsuario(String correo) {
+        log.info("Eliminando usuario: {}", correo);
+        User user = obtenerUsuarioPorCorreo(correo);
+        usuarioRepositorio.eliminarUsuario(correo);
+        log.info("Usuario eliminado exitosamente: {}", correo);
+        return correo;
     }
 
-
-    private User obtenerUsuarioPorId(String usuarioId) {
-        return usuarioRepositorio.buscarPorId(usuarioId)
-                .orElseThrow(() -> new UsuarioNoEncontradoException(usuarioId));
+    /**
+     * Metodos de usuario)
+     */
+    public User obtenerUsuarioPorCorreo(String correo){
+        return usuarioRepositorio.obtenerPorCorreo(correo)
+                .orElseThrow(() -> new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO));
     }
 }

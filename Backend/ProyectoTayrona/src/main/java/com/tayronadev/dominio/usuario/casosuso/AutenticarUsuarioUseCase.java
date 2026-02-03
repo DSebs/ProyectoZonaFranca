@@ -1,7 +1,6 @@
 package com.tayronadev.dominio.usuario.casosuso;
 
 import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
-import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
 import com.tayronadev.dominio.usuario.modelo.User;
 import com.tayronadev.dominio.usuario.repositorios.UsuarioRepositorio;
 import com.tayronadev.dominio.usuario.servicios.AutenticadorUsuario;
@@ -22,21 +21,16 @@ public class AutenticarUsuarioUseCase {
     private final UsuarioRepositorio usuarioRepositorio;
     private final AutenticadorUsuario autenticadorUsuario;
 
-    /**
-     * Autentica un usuario con correo y contraseña
-     */
+
     public User ejecutar(String correo, String contraseña) {
         log.info("Iniciando autenticación para correo: {}", correo);
 
-        // Buscar usuario por correo
-        User user = usuarioRepositorio.obtenerPorCorreo(correo);
-        
-        if (user == null) {
-            log.warn("Intento de autenticación con correo inexistente: {}", correo);
-            throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO);
-        }
+        User user = usuarioRepositorio.obtenerPorCorreo(correo)
+                .orElseThrow(() -> {
+                    log.warn("Intento de autenticación con correo inexistente: {}", correo);
+                    return new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO);
+                });
 
-        // Validar credenciales
         autenticadorUsuario.validarCredenciales(user, contraseña);
 
         log.info("Autenticación exitosa para usuario: {} ({})", user.getNombre(), correo);
@@ -47,12 +41,8 @@ public class AutenticarUsuarioUseCase {
      * Verifica si un usuario puede iniciar sesión (usuario existe y está activo)
      */
     public boolean puedeIniciarSesion(String correo) {
-        try {
-            User user = usuarioRepositorio.obtenerPorCorreo(correo);
-            return autenticadorUsuario.puedeIniciarSesion(user);
-        } catch (Exception e) {
-            log.debug("Usuario no puede iniciar sesión: {}", e.getMessage());
-            return false;
-        }
+        return usuarioRepositorio.obtenerPorCorreo(correo)
+                .map(autenticadorUsuario::puedeIniciarSesion)
+                .orElse(false);
     }
 }

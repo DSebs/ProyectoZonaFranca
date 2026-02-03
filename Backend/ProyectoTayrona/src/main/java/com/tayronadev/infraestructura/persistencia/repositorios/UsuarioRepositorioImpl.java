@@ -35,21 +35,11 @@ public class UsuarioRepositorioImpl implements UsuarioRepositorio {
     }
     
     @Override
-    public User CrearUsuario(User user) {
-        log.debug("Creando nuevo usuario con correo: {}", user.getCorreo());
-        return guardar(user);
-    }
-    
-    @Override
-    public void actualizarUsuario(String id, User user) {
-        log.debug("Actualizando usuario con ID: {}", id);
-        if (!jpaRepository.existsById(id)) {
-            log.warn("Intento de actualizar usuario inexistente con ID: {}", id);
-            throw new IllegalArgumentException("Usuario no encontrado con ID: " + id);
-        }
+    public void actualizarUsuario(User user) {
+        log.debug("Actualizando usuario con ID: {}", user.getId());
         var entity = mapper.toEntity(user);
         jpaRepository.save(entity);
-        log.debug("Usuario actualizado exitosamente con ID: {}", id);
+        log.debug("Usuario actualizado exitosamente con ID: {}", user.getId());
     }
     
     @Override
@@ -67,11 +57,10 @@ public class UsuarioRepositorioImpl implements UsuarioRepositorio {
     }
     
     @Override
-    public User obtenerPorCorreo(String correo) {
+    public Optional<User> obtenerPorCorreo(String correo) {
         log.debug("Buscando usuario por correo: {}", correo);
         return jpaRepository.findByCorreo(correo)
-                .map(mapper::toDomain)
-                .orElse(null);
+                .map(mapper::toDomain);
     }
     
     @Override
@@ -128,15 +117,6 @@ public class UsuarioRepositorioImpl implements UsuarioRepositorio {
         return jpaRepository.findAll()
                 .stream()
                 .map(UsuarioEntity::getCorreo)
-                .collect(Collectors.toList());
-    }
-    
-    @Override
-    public List<String> obtenerNombre() {
-        log.debug("Obteniendo lista de nombres");
-        return jpaRepository.findAll()
-                .stream()
-                .map(UsuarioEntity::getNombre)
                 .collect(Collectors.toList());
     }
 }
