@@ -17,8 +17,7 @@ public class UsuarioMapper {
         if (user == null) return null;
         
         var entity = new UsuarioEntity();
-        
-        entity.setId(user.getId());
+
         entity.setNombre(user.getNombre());
         entity.setCorreo(user.getCorreo());
         entity.setContraseña(user.getContraseña());
@@ -39,7 +38,6 @@ public class UsuarioMapper {
         // al estar en la base de datos. Si necesitamos evitar validaciones en reconstrucción,
         // se podría considerar agregar un constructor de reconstrucción en User
         return new User(
-            entity.getId(),
             entity.getNombre(),
             entity.getCorreo(),
             entity.getContraseña(),

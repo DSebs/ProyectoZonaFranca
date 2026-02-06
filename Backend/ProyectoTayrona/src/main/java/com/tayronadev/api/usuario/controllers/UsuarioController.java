@@ -15,10 +15,10 @@ import com.tayronadev.dominio.usuario.casosuso.CrearUsuarioUseCase;
 import com.tayronadev.dominio.usuario.casosuso.GestionarUsuarioUseCase;
 import com.tayronadev.dominio.usuario.modelo.User;
 import com.tayronadev.dominio.usuario.servicios.Jwt;
+import com.tayronadev.infraestructura.persistencia.mappers.UsuarioMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +39,7 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponse> createUser(@Valid @RequestBody CrearUsuarioRequest request) {
         log.info("Creando nuevo usuario: {}", mapper.toCorreo(request));
 
-        User user = crearUsuarioUseCase.ejecutar(
+        User user = crearUsuarioUseCase.ejecutarCreaciónUsuario(
                 mapper.toNombre(request),
                 mapper.toCorreo(request),
                 mapper.toContraseña(request),
@@ -53,10 +53,11 @@ public class UsuarioController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody IniciarSesionRequest request) {
         log.info("Intento de inicio de sesión para correo: {}", mapper.toCorreo(request));
 
-        User user = autenticarUsuarioUseCase.ejecutar(
+        User user = autenticarUsuarioUseCase.ejecutarInicioSesion(
                 mapper.toCorreo(request),
-                mapper.toContraseña(request)
-        );
+                mapper.toContraseñaAlojada(request),
+                mapper.toCuentaActiva(request),
+                mapper.toContraseñaIngresada(request));
 
         String token = jwt.generarToken(user);
         String refreshToken = jwt.generarReinicioToken(user);

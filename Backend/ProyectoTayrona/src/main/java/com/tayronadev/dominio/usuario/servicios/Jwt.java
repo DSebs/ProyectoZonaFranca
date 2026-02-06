@@ -35,7 +35,6 @@ public class Jwt {
 
     private String construirToken(final User user, final long expiracion) {
         return Jwts.builder()
-                .id(user.getId())
                 .subject(user.getCorreo())
                 .claim("name", user.getNombre())
                 .issuedAt(new Date(System.currentTimeMillis()))

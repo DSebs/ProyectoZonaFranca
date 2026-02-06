@@ -40,12 +40,21 @@ public class UsuarioDtoMapper {
     // ==================== IniciarSesionRequest ====================
 
     public String toCorreo(IniciarSesionRequest request) {
-        return request.getCorreo();
+        return request.getInformaciónInicioDeSesiónRequest().getCorreo();
     }
 
-    public String toContraseña(IniciarSesionRequest request) {
-        return request.getContraseña();
+    public String toContraseñaAlojada(IniciarSesionRequest request) {
+        return request.getInformaciónInicioDeSesiónRequest().getContraseñaAlojada();
     }
+
+    public Boolean toCuentaActiva(IniciarSesionRequest request) {
+        return request.getInformaciónInicioDeSesiónRequest().getCuentaActiva();
+    }
+
+    public String toContraseñaIngresada(IniciarSesionRequest request) {
+        return request.getInformaciónInicioDeSesiónRequest().getContraseñaIngresada();
+    }
+
 
     // ==================== ActualizarUsuarioRequest ====================
 
@@ -78,7 +87,6 @@ public class UsuarioDtoMapper {
      */
     public UsuarioResponse toUsuarioResponse(User user) {
         return UsuarioResponse.builder()
-                .id(user.getId())
                 .nombre(user.getNombre())
                 .correo(user.getCorreo())
                 .tipoUsuario(user.getTipoUsuario())

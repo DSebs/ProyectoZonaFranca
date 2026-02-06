@@ -6,14 +6,11 @@ import lombok.NonNull;
 import lombok.Setter;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
 import com.tayronadev.dominio.usuario.excepcionesUsuario.ContraseñaExcepcion;
-import com.tayronadev.dominio.usuario.excepcionesUsuario.InicioSesiónExcepcion;
-
-import java.util.List;
 
 @Getter
 public class User {
 
-    private final String id;
+    private String id;
     private final String nombre;
     @Setter
     private String correo;
@@ -24,9 +21,8 @@ public class User {
     @Setter
     private TipoUsuario tipoUsuario;
 
-    public User(String id, @NonNull String nombre, @NonNull String correo,
+    public User(@NonNull String nombre, @NonNull String correo,
                 @NonNull String contraseña, @NonNull TipoUsuario tipoUsuario) {
-        this.id = id;
         this.nombre = nombre;
         this.correo = correo;
         this.contraseña = contraseña;
@@ -34,13 +30,13 @@ public class User {
         this.cuentaActiva = true;
         
         // Validar que el correo y la contraseña cumplan con los requisitos
-        validarCorreoElectronico();
-        validarComposicionContraseña();
+        validarCorreoElectronico(correo);
+        validarComposicionContraseña(contraseña);
     }
 
     
     // Validar composicion de correo electronico
-    public void validarCorreoElectronico() {
+    public void validarCorreoElectronico(String correo) {
         if (correo == null) {
             throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_NULO);
         } else if (correo.isEmpty()) {
@@ -50,15 +46,8 @@ public class User {
         }
     }
 
-    //Validar si correo inicio de sesión:
-    public void correoExistente(List<String> lista, String correo){
-        if (!lista.contains(correo)) {
-            throw new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO);
-        }
-    }
-
     // Validar composición de contraseña (no valida si ya está hasheada, ej. BCrypt)
-    public void validarComposicionContraseña() {
+    public void validarComposicionContraseña(String contraseña) {
         if (contraseña != null && contraseña.startsWith("$2")) {
             return; // Contraseña ya hasheada (BCrypt)
         }
@@ -76,22 +65,9 @@ public class User {
         }
      }
 
-    //Validar si correo y contraseña existe: 
-   public void contraseñaExistente(List<String> lista, String contraseña){
-            if (!lista.contains(contraseña)) {
-                throw new ContraseñaExcepcion(ContraseñaExcepcion.MENSAJE_CONTRASEÑA_INVALIDA);
-            }
-    }
-
-    // Validación que se hara accediendo
-    //a la base de datos, validar con sebas si hacemos el metodo en el controller
-    //public boolean verificarContraseña(String contraseñaAVerificar) {
-    //    return Objects.equals(this.contraseña, contraseñaAVerificar);
-    //}
-
     // Setter personalizado para contraseña con validación
     public void setContraseña(@NonNull String contraseña) {
         this.contraseña = contraseña;
-        validarComposicionContraseña();
+        validarComposicionContraseña(contraseña);
     }
 }

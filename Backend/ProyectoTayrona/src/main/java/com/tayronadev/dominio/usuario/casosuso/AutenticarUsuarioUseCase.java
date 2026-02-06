@@ -22,7 +22,7 @@ public class AutenticarUsuarioUseCase {
     private final AutenticadorUsuario autenticadorUsuario;
 
 
-    public User ejecutar(String correo, String contraseña) {
+    public User ejecutarInicioSesion(String correo, String contraseñaActual, Boolean cuentaActiva, String contraseñaIngresada) {
         log.info("Iniciando autenticación para correo: {}", correo);
 
         User user = usuarioRepositorio.obtenerPorCorreo(correo)
@@ -31,9 +31,10 @@ public class AutenticarUsuarioUseCase {
                     return new CorreoExcepcion(CorreoExcepcion.MENSAJE_CORREO_INVALIDO);
                 });
 
-        autenticadorUsuario.validarCredenciales(user, contraseña);
+        autenticadorUsuario.validarCredenciales(correo, contraseñaActual, cuentaActiva, contraseñaIngresada);
 
-        log.info("Autenticación exitosa para usuario: {} ({})", user.getNombre(), correo);
+        log.info("Autenticación exitosa para usuario: {}", correo);
+
         return user;
     }
 

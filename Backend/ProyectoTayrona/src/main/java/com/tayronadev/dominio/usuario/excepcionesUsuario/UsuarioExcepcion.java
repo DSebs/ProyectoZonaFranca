@@ -2,8 +2,6 @@ package com.tayronadev.dominio.usuario.excepcionesUsuario;
 
 public abstract class UsuarioExcepcion extends RuntimeException {
 
-    private static final String USUARIO_NO_ENCONTRADO = "Usuario no encontrado";
-
     protected UsuarioExcepcion(String mensaje) {
         super(mensaje);
     }

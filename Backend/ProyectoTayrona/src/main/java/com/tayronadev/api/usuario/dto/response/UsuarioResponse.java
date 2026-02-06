@@ -10,7 +10,6 @@ import lombok.Value;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsuarioResponse {
 
-    String id;
     String nombre;
     String correo;
     TipoUsuario tipoUsuario;
