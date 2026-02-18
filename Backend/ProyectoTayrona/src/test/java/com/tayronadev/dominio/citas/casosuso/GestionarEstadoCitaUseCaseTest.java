@@ -1,11 +1,13 @@
 package com.tayronadev.dominio.citas.casosuso;
 
+import com.tayronadev.dominio.auditoria.casosuso.RegistrarCambioEstadoUseCase;
 import com.tayronadev.dominio.citas.excepciones.CitaNoEncontradaException;
 import com.tayronadev.dominio.citas.excepciones.EstadoCitaInvalidoException;
 import com.tayronadev.dominio.citas.modelo.*;
 import com.tayronadev.dominio.citas.repositorios.CitaRepositorio;
 import com.tayronadev.dominio.citas.servicios.GestorEstadosCita;
 import com.tayronadev.dominio.notificacion.casosuso.NotificarCambioEstadoCitaUseCase;
+import com.tayronadev.dominio.usuario.servicios.UsuarioActualService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,6 +37,12 @@ class GestionarEstadoCitaUseCaseTest {
     
     @Mock
     private NotificarCambioEstadoCitaUseCase notificarCambioEstado;
+    
+    @Mock
+    private RegistrarCambioEstadoUseCase registrarCambioEstado;
+    
+    @Mock
+    private UsuarioActualService usuarioActualService;
     
     @InjectMocks
     private GestionarEstadoCitaUseCase gestionarEstadoUseCase;

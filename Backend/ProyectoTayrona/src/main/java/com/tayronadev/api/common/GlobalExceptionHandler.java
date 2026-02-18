@@ -1,5 +1,6 @@
 package com.tayronadev.api.common;
 
+import com.tayronadev.dominio.auditoria.excepciones.RegistroNoEncontradoException;
 import com.tayronadev.dominio.citas.excepciones.CitaNoEncontradaException;
 import com.tayronadev.dominio.citas.excepciones.EstadoCitaInvalidoException;
 import com.tayronadev.dominio.citas.excepciones.HorarioNoDisponibleException;
@@ -115,6 +116,26 @@ public class GlobalExceptionHandler {
         );
         
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+    
+    /**
+     * Maneja errores cuando no se encuentra un registro de auditoría
+     */
+    @ExceptionHandler(RegistroNoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> handleRegistroNoEncontrado(
+            RegistroNoEncontradoException ex,
+            HttpServletRequest request) {
+        
+        log.warn("Registro de auditoría no encontrado: {}", ex.getMessage());
+        
+        var response = ErrorResponse.of(
+                ex.getMessage(),
+                "Registro No Encontrado",
+                HttpStatus.NOT_FOUND.value(),
+                request.getRequestURI()
+        );
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
     
     /**

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import com.tayronadev.dominio.usuario.modelo.TipoUsuario;
 
 @Entity
-@Table(name = "usurios")
+@Table(name = "usuarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

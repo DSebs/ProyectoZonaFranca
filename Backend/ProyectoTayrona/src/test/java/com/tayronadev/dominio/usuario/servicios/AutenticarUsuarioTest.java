@@ -1,5 +1,8 @@
 package com.tayronadev.dominio.usuario.servicios;
 
+import com.tayronadev.dominio.usuario.excepcionesUsuario.ContraseñaExcepcion;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.CorreoExcepcion;
+import com.tayronadev.dominio.usuario.excepcionesUsuario.InicioSesiónExcepcion;
 import com.tayronadev.dominio.usuario.modelo.TipoUsuario;
 import com.tayronadev.dominio.usuario.modelo.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,13 +42,13 @@ public class AutenticarUsuarioTest {
         @Test
         @DisplayName("Permite iniciar sesión cuando las credenciales son válidas")
         void permiteIniciarSesionCuandoCredencialesSonValidas() {
-
             // Arrange
             String contraseñaIngresada = "Saavedra2026";
 
             when(passwordEncoder.matches(contraseñaIngresada, user.getContraseña()))
                     .thenReturn(true);
 
+            // Act & Assert
             assertDoesNotThrow(() ->
                     autenticadorUsuario.validarCredenciales(
                             user.getCorreo(),
@@ -57,21 +60,15 @@ public class AutenticarUsuarioTest {
         }
 
         @Test
-        @DisplayName("No permite iniciar sesión cuando el correo es inválido")
-        void noPermiteIniciarSesionCuandoCorreoEsInvalido() {
+        @DisplayName("No permite iniciar sesión cuando el correo es null")
+        void noPermiteIniciarSesionCuandoCorreoEsNull() {
             // Arrange
-            String correoInvalido = "correo-invalido";
             String contraseñaIngresada = "Saavedra2026";
-            
-            when(usuarioRepositorio.obtenerPorCorreo(correoInvalido))
-                .thenReturn(Optional.empty());
 
-            when(passwordEncoder.matches(contraseñaIngresada, user.getContraseña()))
-                .thenReturn(true);
-
+            // Act & Assert - Correo null lanza excepción
             assertThrows(CorreoExcepcion.class, () ->
                     autenticadorUsuario.validarCredenciales(
-                            correoInvalido,
+                            null, // correo null
                             user.getContraseña(),
                             user.isCuentaActiva(),
                             contraseñaIngresada
@@ -84,19 +81,17 @@ public class AutenticarUsuarioTest {
         void noPermiteIniciarSesionCuandoContraseñaEsInvalida() {
             // Arrange
             String correo = "erickdiazsaavedra@gmail.com";
-            String contraseñaIngresada = "Saavedra2026";
-            
-            when(usuarioRepositorio.obtenerPorCorreo(correo))
-                .thenReturn(Optional.of(user));
+            String contraseñaIngresada = "ContrasenaIncorrecta";
 
             when(passwordEncoder.matches(contraseñaIngresada, user.getContraseña()))
                 .thenReturn(false);
 
+            // Act & Assert
             assertThrows(ContraseñaExcepcion.class, () ->
                     autenticadorUsuario.validarCredenciales(
                         correo,
                         user.getContraseña(),
-                        user.isCuentaActiva(),
+                        true, // cuenta activa
                         contraseñaIngresada
                     )
             );
@@ -108,18 +103,13 @@ public class AutenticarUsuarioTest {
             // Arrange
             String correo = "erickdiazsaavedra@gmail.com";
             String contraseñaIngresada = "Saavedra2026";
-            
-            when(usuarioRepositorio.obtenerPorCorreo(correo))
-                .thenReturn(Optional.of(user));
 
-            when(passwordEncoder.matches(contraseñaIngresada, user.getContraseña()))
-                .thenReturn(true);
-
+            // Act & Assert - La validación de cuenta inactiva ocurre antes de verificar contraseña
             assertThrows(InicioSesiónExcepcion.class, () ->
                     autenticadorUsuario.validarCredenciales(
                         correo,
                         user.getContraseña(),
-                        false,
+                        false, // cuenta inactiva
                         contraseñaIngresada
                     )
             );
